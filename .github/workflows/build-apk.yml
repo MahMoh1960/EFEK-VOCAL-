@@ -18,19 +18,18 @@ jobs:
           java-version: 17
 
       - uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: 8.10.2
 
       - name: Préparer le projet
         run: |
           [ -f .env ] || cp .env.example .env
           sed -i '/signingConfigs.getByName("debugConfig")/d' app/build.gradle.kts
+          sed -i 's#distributionUrl=.*#distributionUrl=https\\://services.gradle.org/distributions/gradle-9.3.1-bin.zip#' gradle/wrapper/gradle-wrapper.properties
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses || true
 
       - name: Compiler l'APK
         run: |
-          if [ -f gradlew ]; then chmod +x gradlew; ./gradlew assembleDebug --no-daemon;
-          else gradle assembleDebug --no-daemon; fi
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
 
       - uses: actions/upload-artifact@v4
         with:

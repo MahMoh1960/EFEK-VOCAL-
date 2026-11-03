@@ -47,11 +47,11 @@ class MainActivity : ComponentActivity() {
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
-            Toast.makeText(this, "Izin Mik Aktif! Silakan aktifkan input monitor.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Micro autorisé ! Vous pouvez activer le retour d'écoute.", Toast.LENGTH_SHORT).show()
             // Turn on processing dynamically if allowed
             viewModel.updateEffects { state -> state.eq.isEnabled = true }
         } else {
-            Toast.makeText(this, "Izin ditolak. Silakan berikan izin mikrofon untuk dapat memproses vokal mikrofon Anda secara real-time.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Autorisation refusée. Veuillez autoriser le micro pour traiter votre voix en temps réel.", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -78,7 +78,7 @@ class MainActivity : ComponentActivity() {
 
     private fun checkAndRequestMicPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "Izin Mik Sudah Diberikan!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Autorisation du micro déjà accordée !", Toast.LENGTH_SHORT).show()
         } else {
             permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
         }
@@ -175,19 +175,19 @@ fun MainAppScaffold(
                     ) {
                         Icon(
                             Icons.Default.Warning,
-                            contentDescription = "Warning mic",
+                            contentDescription = "Avertissement micro",
                             tint = Color(0xFFFFCC00),
                             modifier = Modifier.size(24.dp)
                         )
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                "Izin Mikrofon Diperlukan",
+                                "Autorisation du micro requise",
                                 color = Color.White,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                "Aktifkan izin mikrofon untuk merekam, memproses, dan mendengarkan vokal mikrofon Anda secara real-time.",
+                                "Activez l'autorisation du micro pour enregistrer, traiter et écouter votre voix en temps réel.",
                                 color = Color.LightGray,
                                 fontSize = 10.sp,
                                 lineHeight = 13.sp
@@ -199,7 +199,7 @@ fun MainAppScaffold(
                             contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
                             modifier = Modifier.height(32.dp)
                         ) {
-                            Text("IZINKAN", color = Color.Black, fontSize = 10.sp, fontWeight = FontWeight.Black)
+                            Text("AUTORISER", color = Color.Black, fontSize = 10.sp, fontWeight = FontWeight.Black)
                         }
                     }
                 }

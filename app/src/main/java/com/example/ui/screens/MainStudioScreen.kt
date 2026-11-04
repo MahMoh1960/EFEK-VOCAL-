@@ -77,6 +77,11 @@ fun MainStudioScreen(
             onMicInputSelected = { viewModel.selectMicInput(it) }
         )
 
+        Spacer(modifier = Modifier.height(10.dp))
+
+        // --- 2b. IMPORT D'UN FICHIER AUDIO DU TÉLÉPHONE ---
+        AudioImportPanel()
+
         Spacer(modifier = Modifier.height(14.dp))
 
         // --- 3. SPECTRUM ANALYZER & VU METERS ---
@@ -955,7 +960,7 @@ fun HeaderStatsDeck(viewModel: VocalStudioViewModel) {
     ) {
         Column {
             Text(
-                text = "BRO AUDIO LABS",
+                text = "MOHAMED AUDIO LABS",
                 color = primaryColor.copy(alpha = 0.8f),
                 fontSize = 9.sp,
                 fontWeight = FontWeight.Bold,
@@ -963,7 +968,7 @@ fun HeaderStatsDeck(viewModel: VocalStudioViewModel) {
                 fontFamily = FontFamily.Monospace
             )
             Text(
-                text = "BRO EFEK VOCAL",
+                text = "EFFETS VOCAUX MOHAMED",
                 color = Color.White,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Black,
@@ -1010,7 +1015,7 @@ fun InputMonitoringController(
             onClick = onInputToggled,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(58.dp)
+                .height(70.dp)
                 .testTag("input_on_off_toggle"),
             shape = RoundedCornerShape(10.dp),
             colors = ButtonDefaults.buttonColors(

@@ -326,6 +326,12 @@ class AudioProcessor {
                     }
                 }
 
+                // Fichier audio importé : il remplace le micro pendant la lecture
+                val filePlaying = AudioFileBridge.isPlaying
+                if (filePlaying) {
+                    AudioFileBridge.fillBuffer(inBuf, currentBufferSize)
+                }
+
                 val dspStart = System.nanoTime()
                 var rmsLeftSum = 0.0
                 var rmsRightSum = 0.0
@@ -362,7 +368,7 @@ class AudioProcessor {
                         rmsLeftSum += finalL * finalL
                         rmsRightSum += finalR * finalR
                         
-                        if (isInputActive) {
+                        if (isInputActive || filePlaying) {
                             outBuf[i * 2] = (finalL * 32767.0f).toInt().toShort()
                             outBuf[i * 2 + 1] = (finalR * 32767.0f).toInt().toShort()
                         } else {
@@ -688,7 +694,7 @@ class AudioProcessor {
                     rmsRightSum += finalR * finalR
 
                     // Covert float range back to hardware-ready 16-bit PCM Short representations
-                    if (isInputActive) {
+                    if (isInputActive || filePlaying) {
                         outBuf[i * 2] = (finalL * 32767.0f).toInt().toShort()
                         outBuf[i * 2 + 1] = (finalR * 32767.0f).toInt().toShort()
                     } else {

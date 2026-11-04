@@ -65,7 +65,7 @@ fun MixerScreen(
         ) {
             Column {
                 Text(
-                    text = "STUDIO MIXING CONSOLE",
+                    text = "CONSOLE DE MIXAGE STUDIO",
                     color = primaryColor,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
@@ -73,7 +73,7 @@ fun MixerScreen(
                     fontFamily = FontFamily.Monospace
                 )
                 Text(
-                    text = "Master Console Faders",
+                    text = "Curseurs de la console principale",
                     color = Color.White,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Black
@@ -102,7 +102,7 @@ fun MixerScreen(
         ) {
             // FADER 1: INPUT MIC
             VocalFaderColumn(
-                label = "INPUT MIC",
+                label = "ENTRÉE MICRO",
                 value = volInput,
                 onValueChange = { viewModel.setVolInput(it) },
                 liveLevelValue = liveVU.first * 1.1f * volInput,
@@ -111,7 +111,7 @@ fun MixerScreen(
 
             // FADER 2: VOCAL MAIN
             VocalFaderColumn(
-                label = "VOCAL CORE",
+                label = "VOIX PRINCIPALE",
                 value = volVocal,
                 onValueChange = { viewModel.setVolVocal(it) },
                 liveLevelValue = liveVU.first * 0.9f * volVocal,
@@ -120,7 +120,7 @@ fun MixerScreen(
 
             // FADER 3: EFFECTS SEND
             VocalFaderColumn(
-                label = "FX SEND",
+                label = "ENVOI EFFETS",
                 value = volEffect,
                 onValueChange = { viewModel.setVolEffect(it) },
                 liveLevelValue = liveVU.second * 1.2f * volEffect,
@@ -129,7 +129,7 @@ fun MixerScreen(
 
             // FADER 4: MASTER OUT
             VocalFaderColumn(
-                label = "MASTER OUT",
+                label = "SORTIE MASTER",
                 value = volMaster,
                 onValueChange = { viewModel.setVolMaster(it) },
                 liveLevelValue = (liveVU.first + liveVU.second) * 0.5f * volMaster,
@@ -169,7 +169,7 @@ fun RowScope.VocalFaderColumn(
         Spacer(modifier = Modifier.height(3.dp))
         
         Text(
-            text = if (value <= 0.05f) "MUTE" else "${(value * 100).roundToInt()}%",
+            text = if (value <= 0.05f) "MUET" else "${(value * 100).roundToInt()}%",
             color = if (value <= 0.05f) PeakClipRed else primaryColor,
             fontSize = 9.sp,
             fontFamily = FontFamily.Monospace,
@@ -195,7 +195,7 @@ fun RowScope.VocalFaderColumn(
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.End
             ) {
-                listOf("+6", "0", "-6", "-12", "-24", "-inf").forEach { tick ->
+                listOf("+6", "0", "-6", "-12", "-24", "-∞").forEach { tick ->
                     Text(
                         tick,
                         color = LightMutedText,

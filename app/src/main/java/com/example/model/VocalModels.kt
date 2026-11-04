@@ -1,62 +1,62 @@
 package com.example.model
 
 enum class WaveTheme(val label: String) {
-    DARK_NEON("Dark Neon"),
-    CYBER_BLUE("Cyber Blue"),
-    GOLD_PRO("Gold Pro"),
-    RED_STUDIO("Red Studio"),
-    PURPLE_GALAXY("Purple Galaxy"),
-    EMERALD_PRO("Emerald Pro")
+    DARK_NEON("Néon sombre"),
+    CYBER_BLUE("Bleu cyber"),
+    GOLD_PRO("Or pro"),
+    RED_STUDIO("Rouge studio"),
+    PURPLE_GALAXY("Galaxie violette"),
+    EMERALD_PRO("Émeraude pro")
 }
 
 enum class PitchScale(val label: String) {
-    CHROMATIC("Chromatic"),
-    MAJOR("Major"),
-    MINOR("Minor"),
-    PENTATONIC("Pentatonic")
+    CHROMATIC("Chromatique"),
+    MAJOR("Majeure"),
+    MINOR("Mineure"),
+    PENTATONIC("Pentatonique")
 }
 
 enum class PitchKey(val label: String) {
-    C("C"), CD_CS("C# / Db"), D("D"), DE_DS("D# / Eb"), E("E"),
-    F("F"), FG_FS("F# / Gb"), G("G"), GA_GS("G# / Ab"), A("A"),
-    AB_AS("A# / Bb"), B("B")
+    C("Do"), CD_CS("Do# / Réb"), D("Ré"), DE_DS("Ré# / Mib"), E("Mi"),
+    F("Fa"), FG_FS("Fa# / Solb"), G("Sol"), GA_GS("Sol# / Lab"), A("La"),
+    AB_AS("La# / Sib"), B("Si")
 }
 
 enum class PitchMode(val label: String) {
-    NATURAL("Natural"),
+    NATURAL("Naturel"),
     POP("Pop"),
-    HARD_TUNE("Hard Tune"),
+    HARD_TUNE("Tune dur"),
     ROBOT("Robot")
 }
 
 enum class ReverbType(val label: String) {
-    A("Reverb A"),
-    B("Reverb B (Hall)"),
-    C("Reverb B (Plate)"),
-    D("Reverb B (Arena)"),
-    E("Reverb B (Studio)")
+    A("Réverb A"),
+    B("Réverb B (Salle)"),
+    C("Réverb B (Plaque)"),
+    D("Réverb B (Arène)"),
+    E("Réverb B (Studio)")
 }
 
 // Global studio presets
 enum class StudioPreset(val label: String) {
-    KARAOKE_STUDIO("Karaoke Studio"),
-    DANGDUT_MODERN("Dangdut Modern"),
-    MC_PROFESIONAL("MC Profesional"),
+    KARAOKE_STUDIO("Karaoké studio"),
+    DANGDUT_MODERN("Dangdut moderne"),
+    MC_PROFESIONAL("MC professionnel"),
     PODCAST("Podcast"),
-    LIVE_STREAMING("Live Streaming"),
-    VOKAL_JERNIH("Vokal Jernih"),
-    VOKAL_TEBAL("Vokal Tebal"),
-    KONSER_BESAR("Konser Besar"),
-    STUDIO_REKAMAN("Studio Rekaman"),
-    MASJID("Masjid"),
-    CERAMAH("Ceramah"),
-    PRESENTER("Presenter"),
-    PENYANYI_PRIA("Penyanyi Pria"),
-    PENYANYI_WANITA("Penyanyi Wanita"),
-    BAND_LIVE("Band Live"),
-    ACOUSTIC("Acoustic"),
-    EDM_VOCAL("EDM Vocal"),
-    ROCK_VOCAL("Rock Vocal")
+    LIVE_STREAMING("Streaming en direct"),
+    VOKAL_JERNIH("Voix claire"),
+    VOKAL_TEBAL("Voix épaisse"),
+    KONSER_BESAR("Grand concert"),
+    STUDIO_REKAMAN("Studio d'enregistrement"),
+    MASJID("Mosquée"),
+    CERAMAH("Prêche"),
+    PRESENTER("Présentateur"),
+    PENYANYI_PRIA("Chanteur"),
+    PENYANYI_WANITA("Chanteuse"),
+    BAND_LIVE("Groupe live"),
+    ACOUSTIC("Acoustique"),
+    EDM_VOCAL("Voix EDM"),
+    ROCK_VOCAL("Voix rock")
 }
 
 // 12 Professional Audio Effect Racks

@@ -86,7 +86,7 @@ fun MainStudioScreen(
 
         // --- 4. PRESETS SELECTOR ROW ---
         Text(
-            text = "STUDIO PRESET PRO",
+            text = "PRÉRÉGLAGES STUDIO PRO",
             color = primaryColor,
             fontSize = 11.sp,
             fontWeight = FontWeight.Bold,
@@ -128,7 +128,7 @@ fun MainStudioScreen(
             Spacer(modifier = Modifier.height(10.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "CUSTOM USER PRESET",
+                    text = "MES PRÉRÉGLAGES",
                     color = secondaryColor,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
@@ -166,7 +166,7 @@ fun MainStudioScreen(
                             ) {
                                 Icon(
                                     Icons.Default.Close,
-                                    contentDescription = "Delete preset",
+                                    contentDescription = "Supprimer le préréglage",
                                     tint = PeakClipRed.copy(alpha = 0.7f),
                                     modifier = Modifier.size(14.dp)
                                 )
@@ -191,7 +191,7 @@ fun MainStudioScreen(
         ) {
             Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(16.dp), tint = secondaryColor)
             Spacer(modifier = Modifier.width(6.dp))
-            Text("Simpan Preset Kustom Baru", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            Text("Enregistrer un nouveau préréglage", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
         }
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -203,7 +203,7 @@ fun MainStudioScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "DSP PLUGINS RACK (12 MODULES)",
+                text = "RACK D'EFFETS DSP (12 MODULES)",
                 color = Color.White,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
@@ -222,7 +222,7 @@ fun MainStudioScreen(
         // Rack 1: EQ
         RackSlotItem(
             index = 0,
-            title = "EFFECT RACK 1: PARAMETRIC EQ",
+            title = "EFFET 1 : ÉGALISEUR PARAMÉTRIQUE",
             isEnabled = effects.eq.isEnabled,
             isBypassed = effects.eq.isBypassed,
             isLocked = effects.eq.isLocked,
@@ -235,11 +235,11 @@ fun MainStudioScreen(
             theme = currentTheme
         ) {
             Column(modifier = Modifier.padding(12.dp)) {
-                Text("Realtime 31-Band Graphic Tone Mapping", color = LightMutedText, fontSize = 11.sp)
+                Text("Réglage graphique du timbre en temps réel, 31 bandes", color = LightMutedText, fontSize = 11.sp)
                 Spacer(modifier = Modifier.height(10.dp))
                 
                 // 31 EQ Bands Row Horizontal Scroll
-                Text("31 EQ BANDS (20Hz - 20kHz)", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                Text("31 BANDES D'ÉGALISEUR (20 Hz - 20 kHz)", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(6.dp))
                 LazyRow(
                     modifier = Modifier.fillMaxWidth().height(160.dp),
@@ -285,7 +285,7 @@ fun MainStudioScreen(
                 // High Pass and Low Pass Horizontal Faders
                 Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
                     HorizontalFaderColumn(
-                        label = "High Pass Filter (HPF)",
+                        label = "Filtre passe-haut (HPF)",
                         value = effects.eq.highPassHz,
                         valueRange = 20f..500f,
                         unitDisplay = "Hz",
@@ -294,7 +294,7 @@ fun MainStudioScreen(
                     )
                     Spacer(modifier = Modifier.height(10.dp))
                     HorizontalFaderColumn(
-                        label = "Low Pass Filter (LPF)",
+                        label = "Filtre passe-bas (LPF)",
                         value = effects.eq.lowPassHz,
                         valueRange = 5000f..20000f,
                         unitDisplay = "Hz",
@@ -308,7 +308,7 @@ fun MainStudioScreen(
         // Rack 2: Compressor
         RackSlotItem(
             index = 1,
-            title = "EFFECT RACK 2: DYNAMIC COMPRESSOR",
+            title = "EFFET 2 : COMPRESSEUR DYNAMIQUE",
             isEnabled = effects.compressor.isEnabled,
             isBypassed = effects.compressor.isBypassed,
             isLocked = effects.compressor.isLocked,
@@ -324,7 +324,7 @@ fun MainStudioScreen(
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     Column(modifier = Modifier.weight(1f)) {
                         ValueSliderColumn(
-                            label = "Threshold",
+                            label = "Seuil",
                             value = effects.compressor.thresholdDb,
                             valueRange = -60f..0f,
                             unit = "dB",
@@ -332,7 +332,7 @@ fun MainStudioScreen(
                             color = primaryColor
                         )
                         ValueSliderColumn(
-                            label = "Ratio",
+                            label = "Rapport",
                             value = effects.compressor.ratio,
                             valueRange = 1f..15f,
                             unit = ":1",
@@ -340,7 +340,7 @@ fun MainStudioScreen(
                             color = primaryColor
                         )
                         ValueSliderColumn(
-                            label = "Makeup Gain",
+                            label = "Gain de compensation",
                             value = effects.compressor.makeupGainDb,
                             valueRange = 0f..24f,
                             unit = "dB",
@@ -350,7 +350,7 @@ fun MainStudioScreen(
                     }
                     Column(modifier = Modifier.weight(1f)) {
                         ValueSliderColumn(
-                            label = "Attack Time",
+                            label = "Temps d'attaque",
                             value = effects.compressor.attackMs,
                             valueRange = 0.5f..100f,
                             unit = "ms",
@@ -358,7 +358,7 @@ fun MainStudioScreen(
                             color = secondaryColor
                         )
                         ValueSliderColumn(
-                            label = "Release Time",
+                            label = "Temps de relâchement",
                             value = effects.compressor.releaseMs,
                             valueRange = 10f..1000f,
                             unit = "ms",
@@ -366,7 +366,7 @@ fun MainStudioScreen(
                             color = secondaryColor
                         )
                         ValueSliderColumn(
-                            label = "Knee Radius",
+                            label = "Rayon du coude (knee)",
                             value = effects.compressor.kneeDb,
                             valueRange = 0f..12f,
                             unit = "dB",
@@ -381,7 +381,7 @@ fun MainStudioScreen(
         // Rack 3: Limiter
         RackSlotItem(
             index = 2,
-            title = "EFFECT RACK 3: MASTER LIMITER",
+            title = "EFFET 3 : LIMITEUR MASTER",
             isEnabled = effects.limiter.isEnabled,
             isBypassed = effects.limiter.isBypassed,
             isLocked = effects.limiter.isLocked,
@@ -395,7 +395,7 @@ fun MainStudioScreen(
         ) {
             Column(modifier = Modifier.padding(12.dp)) {
                 ValueSliderColumn(
-                    label = "Ceiling Limit",
+                    label = "Plafond de limitation",
                     value = effects.limiter.ceilingDb,
                     valueRange = -12f..0f,
                     unit = "dB",
@@ -403,7 +403,7 @@ fun MainStudioScreen(
                     color = primaryColor
                 )
                 ValueSliderColumn(
-                    label = "Threshold",
+                    label = "Seuil",
                     value = effects.limiter.thresholdDb,
                     valueRange = -30f..0f,
                     unit = "dB",
@@ -411,7 +411,7 @@ fun MainStudioScreen(
                     color = primaryColor
                 )
                 ValueSliderColumn(
-                    label = "Release Release",
+                    label = "Relâchement",
                     value = effects.limiter.releaseMs,
                     valueRange = 10f..500f,
                     unit = "ms",
@@ -424,7 +424,7 @@ fun MainStudioScreen(
         // Rack 4: Reverb
         RackSlotItem(
             index = 3,
-            title = "EFFECT RACK 4: REVERB PROFESSIONAL",
+            title = "EFFET 4 : RÉVERBÉRATION PRO",
             isEnabled = effects.reverb.isEnabled,
             isBypassed = effects.reverb.isBypassed,
             isLocked = effects.reverb.isLocked,
@@ -438,7 +438,7 @@ fun MainStudioScreen(
         ) {
             Column(modifier = Modifier.padding(12.dp)) {
                 // Room type picker
-                Text("REVERB ALGORITHM PROFILE", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                Text("PROFIL D'ALGORITHME DE RÉVERBÉRATION", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(6.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -469,15 +469,15 @@ fun MainStudioScreen(
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     Column(modifier = Modifier.weight(1f)) {
                         ValueSliderColumn(
-                            label = "Decay Time",
+                            label = "Durée de réverbération",
                             value = effects.reverb.decaySec,
                             valueRange = 0.1f..10f,
-                            unit = "sec",
+                            unit = "s",
                             onValueChange = { newVal -> viewModel.updateEffects { state -> state.reverb.decaySec = newVal } },
                             color = primaryColor
                         )
                         ValueSliderColumn(
-                            label = "Wet Mix",
+                            label = "Mixage de l'effet",
                             value = effects.reverb.mixPercent,
                             valueRange = 0f..100f,
                             unit = "%",
@@ -485,7 +485,7 @@ fun MainStudioScreen(
                             color = primaryColor
                         )
                         ValueSliderColumn(
-                            label = "Pre Delay",
+                            label = "Pré-délai",
                             value = effects.reverb.preDelayMs,
                             valueRange = 0f..200f,
                             unit = "ms",
@@ -495,7 +495,7 @@ fun MainStudioScreen(
                     }
                     Column(modifier = Modifier.weight(1f)) {
                         ValueSliderColumn(
-                            label = "Room Size",
+                            label = "Taille de la pièce",
                             value = effects.reverb.roomSize,
                             valueRange = 0f..100f,
                             unit = "%",
@@ -503,7 +503,7 @@ fun MainStudioScreen(
                             color = secondaryColor
                         )
                         ValueSliderColumn(
-                            label = "Stereo Width",
+                            label = "Largeur stéréo",
                             value = effects.reverb.width,
                             valueRange = 0f..100f,
                             unit = "%",
@@ -511,7 +511,7 @@ fun MainStudioScreen(
                             color = secondaryColor
                         )
                         ValueSliderColumn(
-                            label = "Damping Freq",
+                            label = "Amortissement",
                             value = effects.reverb.damping,
                             valueRange = 0f..100f,
                             unit = "%",
@@ -526,7 +526,7 @@ fun MainStudioScreen(
         // Rack 5: Delay
         RackSlotItem(
             index = 4,
-            title = "EFFECT RACK 5: DIGITAL STEREO DELAY",
+            title = "EFFET 5 : ÉCHO STÉRÉO NUMÉRIQUE",
             isEnabled = effects.delay.isEnabled,
             isBypassed = effects.delay.isBypassed,
             isLocked = effects.delay.isLocked,
@@ -544,7 +544,7 @@ fun MainStudioScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Ping Pong (Bounce Stereo)", color = Color.White, fontSize = 11.sp)
+                    Text("Ping-pong (rebond stéréo)", color = Color.White, fontSize = 11.sp)
                     Switch(
                         checked = effects.delay.isPingPong,
                         onCheckedChange = { newVal -> viewModel.updateEffects { state -> state.delay.isPingPong = newVal } },
@@ -553,7 +553,7 @@ fun MainStudioScreen(
                 }
                 Spacer(modifier = Modifier.height(10.dp))
                 ValueSliderColumn(
-                    label = "Delay Echo Time",
+                    label = "Temps d'écho",
                     value = effects.delay.timeMs,
                     valueRange = 50f..1200f,
                     unit = "ms",
@@ -561,7 +561,7 @@ fun MainStudioScreen(
                     color = primaryColor
                 )
                 ValueSliderColumn(
-                    label = "Feedback (Repeats)",
+                    label = "Rétroaction (répétitions)",
                     value = effects.delay.feedbackPercent,
                     valueRange = 0f..95f,
                     unit = "%",
@@ -569,7 +569,7 @@ fun MainStudioScreen(
                     color = primaryColor
                 )
                 ValueSliderColumn(
-                    label = "Delay Wet Mix",
+                    label = "Mixage de l'écho",
                     value = effects.delay.mixPercent,
                     valueRange = 0f..100f,
                     unit = "%",
@@ -582,7 +582,7 @@ fun MainStudioScreen(
         // Rack 6: Harmony
         RackSlotItem(
             index = 5,
-            title = "EFFECT RACK 6: MULTI-HARMONY ENGINE",
+            title = "EFFET 6 : MOTEUR MULTI-HARMONIES",
             isEnabled = effects.harmony.isEnabled,
             isBypassed = effects.harmony.isBypassed,
             isLocked = effects.harmony.isLocked,
@@ -600,7 +600,7 @@ fun MainStudioScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Auto Harmony (Follow Pitch Correction Key)", color = Color.White, fontSize = 11.sp)
+                    Text("Harmonie auto (suit la tonalité de la correction de hauteur)", color = Color.White, fontSize = 11.sp)
                     Switch(
                         checked = effects.harmony.isAuto,
                         onCheckedChange = { newVal -> viewModel.updateEffects { state -> state.harmony.isAuto = newVal } },
@@ -610,7 +610,7 @@ fun MainStudioScreen(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                Text("VOICES ARRAY LAYER", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                Text("COUCHES DE VOIX", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(6.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     listOf(2, 3, 4, 6).forEach { count ->
@@ -623,7 +623,7 @@ fun MainStudioScreen(
                             border = BorderStroke(1.dp, if (isSel) primaryColor else Color.Transparent)
                         ) {
                             Text(
-                                "$count Voices",
+                                "$count voix",
                                 color = if (isSel) primaryColor else Color.White,
                                 fontSize = 11.sp,
                                 textAlign = TextAlign.Center,
@@ -636,16 +636,16 @@ fun MainStudioScreen(
                 Spacer(modifier = Modifier.height(14.dp))
 
                 ValueSliderColumn(
-                    label = "Manual Pitch Offset",
+                    label = "Décalage de hauteur manuel",
                     value = effects.harmony.pitchShiftSemitones,
                     valueRange = -12f..12f,
-                    unit = "semis",
+                    unit = "demi-tons",
                     onValueChange = { newVal -> viewModel.updateEffects { state -> state.harmony.pitchShiftSemitones = newVal } },
                     color = primaryColor
                 )
 
                 ValueSliderColumn(
-                    label = "Gender Formant Factor",
+                    label = "Facteur de formant (genre de la voix)",
                     value = effects.harmony.genderFormantFactor,
                     valueRange = 0f..100f,
                     unit = "%",
@@ -658,7 +658,7 @@ fun MainStudioScreen(
         // Rack 7: Pitch Correction
         RackSlotItem(
             index = 6,
-            title = "EFFECT RACK 7: PRO PITCH TUNING (AUTO-TUNE)",
+            title = "EFFET 7 : CORRECTION DE HAUTEUR PRO (AUTO-TUNE)",
             isEnabled = effects.pitchCorrection.isEnabled,
             isBypassed = effects.pitchCorrection.isBypassed,
             isLocked = effects.pitchCorrection.isLocked,
@@ -674,7 +674,7 @@ fun MainStudioScreen(
                 // Key and Scale selectors
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Column(modifier = Modifier.weight(1.2f)) {
-                        Text("ROOT MUSICAL KEY", color = LightMutedText, fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                        Text("TONALITÉ DE BASE", color = LightMutedText, fontSize = 9.sp, fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.height(4.dp))
                         LazyRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                             itemsIndexed(PitchKey.values()) { _, pKey ->
@@ -696,7 +696,7 @@ fun MainStudioScreen(
                         }
                     }
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("SCALE TYPE", color = LightMutedText, fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                        Text("TYPE DE GAMME", color = LightMutedText, fontSize = 9.sp, fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.height(4.dp))
                         LazyRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                             itemsIndexed(PitchScale.values()) { _, pScale ->
@@ -722,7 +722,7 @@ fun MainStudioScreen(
                 Spacer(modifier = Modifier.height(14.dp))
 
                 // Mode Selection Natural, Pop, Hard Tune, Robot
-                Text("AUTO-TUNE MODE", color = LightMutedText, fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                Text("MODE AUTO-TUNE", color = LightMutedText, fontSize = 9.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(6.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     PitchMode.values().forEach { pMode ->
@@ -748,7 +748,7 @@ fun MainStudioScreen(
                 Spacer(modifier = Modifier.height(14.dp))
 
                 ValueSliderColumn(
-                    label = "Retune Speed (Attack)",
+                    label = "Vitesse de correction (attaque)",
                     value = effects.pitchCorrection.retuneSpeedPercent,
                     valueRange = 0f..100f,
                     unit = "%",
@@ -757,7 +757,7 @@ fun MainStudioScreen(
                 )
 
                 ValueSliderColumn(
-                    label = "Humanize Factor",
+                    label = "Facteur d'humanisation",
                     value = effects.pitchCorrection.humanizePercent,
                     valueRange = 0f..100f,
                     unit = "%",
@@ -770,7 +770,7 @@ fun MainStudioScreen(
         // Rack 8: Enhancer
         RackSlotItem(
             index = 7,
-            title = "EFFECT RACK 8: VOCAL ENHANCER",
+            title = "EFFET 8 : AMÉLIORATEUR VOCAL",
             isEnabled = effects.enhancer.isEnabled,
             isBypassed = effects.enhancer.isBypassed,
             isLocked = effects.enhancer.isLocked,
@@ -783,17 +783,17 @@ fun MainStudioScreen(
             theme = currentTheme
         ) {
             Column(modifier = Modifier.padding(12.dp)) {
-                ValueSliderColumn(label = "Warmth (Low Saturation)", value = effects.enhancer.warmth, valueRange = 0f..100f, unit = "%", onValueChange = { newVal -> viewModel.updateEffects { state -> state.enhancer.warmth = newVal } }, color = primaryColor)
-                ValueSliderColumn(label = "Presence (Spit Register)", value = effects.enhancer.presence, valueRange = 0f..100f, unit = "%", onValueChange = { newVal -> viewModel.updateEffects { state -> state.enhancer.presence = newVal } }, color = primaryColor)
-                ValueSliderColumn(label = "Clarity (Definition)", value = effects.enhancer.clarity, valueRange = 0f..100f, unit = "%", onValueChange = { newVal -> viewModel.updateEffects { state -> state.enhancer.clarity = newVal } }, color = secondaryColor)
-                ValueSliderColumn(label = "Air (Crisp Breath Shimmer)", value = effects.enhancer.air, valueRange = 0f..100f, unit = "%", onValueChange = { newVal -> viewModel.updateEffects { state -> state.enhancer.air = newVal } }, color = secondaryColor)
+                ValueSliderColumn(label = "Chaleur (saturation des graves)", value = effects.enhancer.warmth, valueRange = 0f..100f, unit = "%", onValueChange = { newVal -> viewModel.updateEffects { state -> state.enhancer.warmth = newVal } }, color = primaryColor)
+                ValueSliderColumn(label = "Présence (registre des sibilantes)", value = effects.enhancer.presence, valueRange = 0f..100f, unit = "%", onValueChange = { newVal -> viewModel.updateEffects { state -> state.enhancer.presence = newVal } }, color = primaryColor)
+                ValueSliderColumn(label = "Clarté (définition)", value = effects.enhancer.clarity, valueRange = 0f..100f, unit = "%", onValueChange = { newVal -> viewModel.updateEffects { state -> state.enhancer.clarity = newVal } }, color = secondaryColor)
+                ValueSliderColumn(label = "Air (souffle brillant)", value = effects.enhancer.air, valueRange = 0f..100f, unit = "%", onValueChange = { newVal -> viewModel.updateEffects { state -> state.enhancer.air = newVal } }, color = secondaryColor)
             }
         }
 
         // Rack 9: De-Esser
         RackSlotItem(
             index = 8,
-            title = "EFFECT RACK 9: SMART DE-ESSER",
+            title = "EFFET 9 : DÉ-ESSEUR INTELLIGENT",
             isEnabled = effects.deEsser.isEnabled,
             isBypassed = effects.deEsser.isBypassed,
             isLocked = effects.deEsser.isLocked,
@@ -806,16 +806,16 @@ fun MainStudioScreen(
             theme = currentTheme
         ) {
             Column(modifier = Modifier.padding(12.dp)) {
-                ValueSliderColumn(label = "Target S-Frequency", value = effects.deEsser.frequencyHz, valueRange = 3000f..9500f, unit = "Hz", onValueChange = { newVal -> viewModel.updateEffects { state -> state.deEsser.frequencyHz = newVal } }, color = primaryColor)
-                ValueSliderColumn(label = "Sensitivity Threshold", value = effects.deEsser.thresholdDb, valueRange = -40f..0f, unit = "dB", onValueChange = { newVal -> viewModel.updateEffects { state -> state.deEsser.thresholdDb = newVal } }, color = primaryColor)
-                ValueSliderColumn(label = "Gain Reduction Amount", value = effects.deEsser.amountPercent, valueRange = 0f..100f, unit = "%", onValueChange = { newVal -> viewModel.updateEffects { state -> state.deEsser.amountPercent = newVal } }, color = secondaryColor)
+                ValueSliderColumn(label = "Fréquence cible du « S »", value = effects.deEsser.frequencyHz, valueRange = 3000f..9500f, unit = "Hz", onValueChange = { newVal -> viewModel.updateEffects { state -> state.deEsser.frequencyHz = newVal } }, color = primaryColor)
+                ValueSliderColumn(label = "Seuil de sensibilité", value = effects.deEsser.thresholdDb, valueRange = -40f..0f, unit = "dB", onValueChange = { newVal -> viewModel.updateEffects { state -> state.deEsser.thresholdDb = newVal } }, color = primaryColor)
+                ValueSliderColumn(label = "Quantité de réduction de gain", value = effects.deEsser.amountPercent, valueRange = 0f..100f, unit = "%", onValueChange = { newVal -> viewModel.updateEffects { state -> state.deEsser.amountPercent = newVal } }, color = secondaryColor)
             }
         }
 
         // Rack 10: Noise Reduction
         RackSlotItem(
             index = 9,
-            title = "EFFECT RACK 10: NOISE REDUCTION & GATE",
+            title = "EFFET 10 : RÉDUCTION DE BRUIT ET GATE",
             isEnabled = effects.noiseReduction.isEnabled,
             isBypassed = effects.noiseReduction.isBypassed,
             isLocked = effects.noiseReduction.isLocked,
@@ -828,16 +828,16 @@ fun MainStudioScreen(
             theme = currentTheme
         ) {
             Column(modifier = Modifier.padding(12.dp)) {
-                ValueSliderColumn(label = "Noise Floor Gate Threshold", value = effects.noiseReduction.noiseThresholdDb, valueRange = -80f..-30f, unit = "dB", onValueChange = { newVal -> viewModel.updateEffects { state -> state.noiseReduction.noiseThresholdDb = newVal } }, color = primaryColor)
-                ValueSliderColumn(label = "Ambient Hum Attenuation", value = effects.noiseReduction.humReductionPercent, valueRange = 0f..100f, unit = "%", onValueChange = { newVal -> viewModel.updateEffects { state -> state.noiseReduction.humReductionPercent = newVal } }, color = primaryColor)
-                ValueSliderColumn(label = "Hiss High-Cut Clamp", value = effects.noiseReduction.hissReductionPercent, valueRange = 0f..100f, unit = "%", onValueChange = { newVal -> viewModel.updateEffects { state -> state.noiseReduction.hissReductionPercent = newVal } }, color = secondaryColor)
+                ValueSliderColumn(label = "Seuil du gate (plancher de bruit)", value = effects.noiseReduction.noiseThresholdDb, valueRange = -80f..-30f, unit = "dB", onValueChange = { newVal -> viewModel.updateEffects { state -> state.noiseReduction.noiseThresholdDb = newVal } }, color = primaryColor)
+                ValueSliderColumn(label = "Atténuation du ronflement", value = effects.noiseReduction.humReductionPercent, valueRange = 0f..100f, unit = "%", onValueChange = { newVal -> viewModel.updateEffects { state -> state.noiseReduction.humReductionPercent = newVal } }, color = primaryColor)
+                ValueSliderColumn(label = "Réduction du souffle (coupe-aigus)", value = effects.noiseReduction.hissReductionPercent, valueRange = 0f..100f, unit = "%", onValueChange = { newVal -> viewModel.updateEffects { state -> state.noiseReduction.hissReductionPercent = newVal } }, color = secondaryColor)
             }
         }
 
         // Rack 11: Stereo Imager
         RackSlotItem(
             index = 10,
-            title = "EFFECT RACK 11: STEREO IMAGER COLLAPSER",
+            title = "EFFET 11 : IMAGEUR STÉRÉO",
             isEnabled = effects.stereoImager.isEnabled,
             isBypassed = effects.stereoImager.isBypassed,
             isLocked = effects.stereoImager.isLocked,
@@ -850,15 +850,15 @@ fun MainStudioScreen(
             theme = currentTheme
         ) {
             Column(modifier = Modifier.padding(12.dp)) {
-                ValueSliderColumn(label = "Stereo Image Field Width", value = effects.stereoImager.widthPercent, valueRange = 0f..200f, unit = "%", onValueChange = { newVal -> viewModel.updateEffects { state -> state.stereoImager.widthPercent = newVal } }, color = primaryColor)
-                ValueSliderColumn(label = "Low Frequency Mono Maker Floor", value = effects.stereoImager.monoMakerHz, valueRange = 20f..350f, unit = "Hz", onValueChange = { newVal -> viewModel.updateEffects { state -> state.stereoImager.monoMakerHz = newVal } }, color = secondaryColor)
+                ValueSliderColumn(label = "Largeur du champ stéréo", value = effects.stereoImager.widthPercent, valueRange = 0f..200f, unit = "%", onValueChange = { newVal -> viewModel.updateEffects { state -> state.stereoImager.widthPercent = newVal } }, color = primaryColor)
+                ValueSliderColumn(label = "Seuil de mono des graves", value = effects.stereoImager.monoMakerHz, valueRange = 20f..350f, unit = "Hz", onValueChange = { newVal -> viewModel.updateEffects { state -> state.stereoImager.monoMakerHz = newVal } }, color = secondaryColor)
             }
         }
 
         // Rack 12: Exciter
         RackSlotItem(
             index = 11,
-            title = "EFFECT RACK 12: HARMONIC TUBE EXCITER",
+            title = "EFFET 12 : EXCITEUR HARMONIQUE À LAMPES",
             isEnabled = effects.exciter.isEnabled,
             isBypassed = effects.exciter.isBypassed,
             isLocked = effects.exciter.isLocked,
@@ -871,8 +871,8 @@ fun MainStudioScreen(
             theme = currentTheme
         ) {
             Column(modifier = Modifier.padding(12.dp)) {
-                ValueSliderColumn(label = "Analog Tube Saturation Factor", value = effects.exciter.tubeSaturationPercent, valueRange = 0f..100f, unit = "%", onValueChange = { newVal -> viewModel.updateEffects { state -> state.exciter.tubeSaturationPercent = newVal } }, color = primaryColor)
-                ValueSliderColumn(label = "Harmonic Clarity Excite Focus", value = effects.exciter.brightFactor, valueRange = 0f..100f, unit = "%", onValueChange = { newVal -> viewModel.updateEffects { state -> state.exciter.brightFactor = newVal } }, color = secondaryColor)
+                ValueSliderColumn(label = "Saturation analogique à lampes", value = effects.exciter.tubeSaturationPercent, valueRange = 0f..100f, unit = "%", onValueChange = { newVal -> viewModel.updateEffects { state -> state.exciter.tubeSaturationPercent = newVal } }, color = primaryColor)
+                ValueSliderColumn(label = "Focus de clarté harmonique", value = effects.exciter.brightFactor, valueRange = 0f..100f, unit = "%", onValueChange = { newVal -> viewModel.updateEffects { state -> state.exciter.brightFactor = newVal } }, color = secondaryColor)
             }
         }
 
@@ -883,15 +883,15 @@ fun MainStudioScreen(
     if (showSaveDialog) {
         AlertDialog(
             onDismissRequest = { showSaveDialog = false },
-            title = { Text("Simpan Preset Baru", color = Color.White, fontWeight = FontWeight.Bold) },
+            title = { Text("Enregistrer un préréglage", color = Color.White, fontWeight = FontWeight.Bold) },
             text = {
                 Column {
-                    Text("Tuliskan nama profil untuk menyimpan konfigurasi slider 12-rak aktif Anda.", color = LightMutedText, fontSize = 12.sp)
+                    Text("Saisissez un nom de profil pour enregistrer la configuration actuelle des curseurs des 12 racks.", color = LightMutedText, fontSize = 12.sp)
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         value = presetNameInput,
                         onValueChange = { presetNameInput = it },
-                        placeholder = { Text("misal: Vokal Studio 1") },
+                        placeholder = { Text("ex. : Voix studio 1") },
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = primaryColor,
                             unfocusedBorderColor = Color.Gray,
@@ -913,12 +913,12 @@ fun MainStudioScreen(
                         }
                     }
                 ) {
-                    Text("SIMPAN", color = primaryColor, fontWeight = FontWeight.Bold)
+                    Text("ENREGISTRER", color = primaryColor, fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showSaveDialog = false }) {
-                    Text("BATAL", color = Color.White)
+                    Text("ANNULER", color = Color.White)
                 }
             }
         )
@@ -973,9 +973,9 @@ fun HeaderStatsDeck(viewModel: VocalStudioViewModel) {
         
         // Monitoring Stats Grid block
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            StatBlock(label = "SAMPLE RATE", value = "44.1 kHz")
-            StatBlock(label = "LATENCY", value = "$masterLatency ms")
-            StatBlock(label = "CPU PROCESS", value = "$masterCpu%", color = if (masterCpu > 15) PeakClipRed else primaryColor)
+            StatBlock(label = "ÉCHANTILL.", value = "44.1 kHz")
+            StatBlock(label = "LATENCE", value = "$masterLatency ms")
+            StatBlock(label = "PROCESSEUR", value = "$masterCpu%", color = if (masterCpu > 15) PeakClipRed else primaryColor)
         }
     }
 }
@@ -1033,14 +1033,14 @@ fun InputMonitoringController(
                     horizontalAlignment = Alignment.Start
                 ) {
                     Text(
-                        text = if (isInputActive) "PROSES VOCAL AKTIF" else "MONITOR MIK NONAKTIF",
+                        text = if (isInputActive) "TRAITEMENT VOCAL ACTIF" else "ÉCOUTE DU MICRO DÉSACTIVÉE",
                         color = if (isInputActive) DarkNeonPrimary else PeakClipRed,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Black,
                         letterSpacing = 0.5.sp
                     )
                     Text(
-                        text = if (isInputActive) "Mikrofon diproses real-time dengan efek studio" else "Ketuk untuk mengaktifkan pendengaran mikrofon",
+                        text = if (isInputActive) "Micro traité en temps réel avec les effets studio" else "Touchez pour activer l'écoute du micro",
                         color = if (isInputActive) Color.White.copy(alpha = 0.9f) else LightMutedText,
                         fontSize = 9.sp,
                         maxLines = 1
@@ -1060,7 +1060,7 @@ fun InputMonitoringController(
         // Mic Routing Grid Selector
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(
-                text = "SUMBER INPUT MIKROFON (HARDWARE ROUTING):",
+                text = "SOURCE D'ENTRÉE DU MICRO (ROUTAGE MATÉRIEL) :",
                 color = LightMutedText,
                 fontSize = 8.5.sp,
                 fontWeight = FontWeight.Bold,
@@ -1074,11 +1074,11 @@ fun InputMonitoringController(
                 com.example.viewmodel.VocalStudioViewModel.MicrophoneInput.values().forEach { inputMode ->
                     val isSelected = selectedMicInput == inputMode
                     val textLabel = when (inputMode) {
-                        com.example.viewmodel.VocalStudioViewModel.MicrophoneInput.SYSTEM_DEFAULT -> "Default"
-                        com.example.viewmodel.VocalStudioViewModel.MicrophoneInput.INTERNAL_MIC -> "Internal"
-                        com.example.viewmodel.VocalStudioViewModel.MicrophoneInput.HEADSET_MIC -> "Headset"
+                        com.example.viewmodel.VocalStudioViewModel.MicrophoneInput.SYSTEM_DEFAULT -> "Défaut"
+                        com.example.viewmodel.VocalStudioViewModel.MicrophoneInput.INTERNAL_MIC -> "Interne"
+                        com.example.viewmodel.VocalStudioViewModel.MicrophoneInput.HEADSET_MIC -> "Casque"
                         com.example.viewmodel.VocalStudioViewModel.MicrophoneInput.BLUETOOTH_MIC -> "Bluetooth"
-                        com.example.viewmodel.VocalStudioViewModel.MicrophoneInput.USB_MIC -> "USB/Card"
+                        com.example.viewmodel.VocalStudioViewModel.MicrophoneInput.USB_MIC -> "USB/Carte"
                     }
                     val icon = when (inputMode) {
                         com.example.viewmodel.VocalStudioViewModel.MicrophoneInput.SYSTEM_DEFAULT -> Icons.Default.Settings
@@ -1196,8 +1196,8 @@ fun StudioMeteringSystem(viewModel: VocalStudioViewModel) {
                 .fillMaxHeight(),
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            VuMeterVerticalBar(label = "L", value = vuLevels.first, peak = vuPeaks.first, modifier = Modifier.weight(1f), tint = primaryColor)
-            VuMeterVerticalBar(label = "R", value = vuLevels.second, peak = vuPeaks.second, modifier = Modifier.weight(1f), tint = primaryColor)
+            VuMeterVerticalBar(label = "G", value = vuLevels.first, peak = vuPeaks.first, modifier = Modifier.weight(1f), tint = primaryColor)
+            VuMeterVerticalBar(label = "D", value = vuLevels.second, peak = vuPeaks.second, modifier = Modifier.weight(1f), tint = primaryColor)
         }
     }
 }
@@ -1311,7 +1311,7 @@ fun RackSlotItem(
                     ) {
                         Icon(
                             imageVector = if (isEnabled) Icons.Default.Check else Icons.Default.Close,
-                            contentDescription = "Power",
+                            contentDescription = "Marche/arrêt",
                             tint = if (isEnabled) Color(0xFF39FF14) else Color(0xFFFF3B30),
                             modifier = Modifier.size(11.dp)
                         )
@@ -1335,7 +1335,7 @@ fun RackSlotItem(
                     // Lock preset indicator
                     Icon(
                         imageVector = Icons.Default.Lock,
-                        contentDescription = "Lock Presets",
+                        contentDescription = "Verrouiller les réglages",
                         tint = if (isLocked) secondaryColor else Color.Gray.copy(alpha = 0.3f),
                         modifier = Modifier
                             .size(16.dp)
@@ -1350,7 +1350,7 @@ fun RackSlotItem(
                         border = BorderStroke(1.dp, if (isBypassed) PeakClipRed else Color.Gray.copy(alpha = 0.3f))
                     ) {
                         Text(
-                            text = if (isBypassed) "BYPASS" else "WET",
+                            text = if (isBypassed) "BYPASS" else "ACTIF",
                             fontSize = 8.sp,
                             fontWeight = FontWeight.Bold,
                             color = if (isBypassed) PeakClipRed else if (isEnabled) Color(0xFF39FF14) else Color.LightGray,
@@ -1361,7 +1361,7 @@ fun RackSlotItem(
                     // Reset button
                     Icon(
                         Icons.Default.Refresh,
-                        contentDescription = "Reset Rack",
+                        contentDescription = "Réinitialiser le rack",
                         tint = Color.LightGray.copy(alpha = 0.6f),
                         modifier = Modifier
                             .size(16.dp)
@@ -1370,7 +1370,7 @@ fun RackSlotItem(
 
                     Icon(
                         imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                        contentDescription = "Toggle Expand",
+                        contentDescription = "Déplier/replier",
                         tint = Color.White
                     )
                 }

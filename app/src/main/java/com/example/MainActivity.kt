@@ -20,6 +20,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,10 +44,18 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel: VocalStudioViewModel by viewModels()
 
+    // État observable de l'autorisation du micro (le bandeau disparaît dès qu'elle est accordée)
+    private var micGranted by mutableStateOf(false)
+
+    private fun refreshMicPermission() {
+        micGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+    }
+
     // Standard Android Microphone permission launcher
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
+        refreshMicPermission()
         if (isGranted) {
             Toast.makeText(this, "Micro autorisé ! Vous pouvez activer le retour d'écoute.", Toast.LENGTH_SHORT).show()
             // Turn on processing dynamically if allowed
@@ -58,6 +68,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        refreshMicPermission()
         
         setContent {
             val currentTheme by viewModel.currentTheme.collectAsState()
@@ -69,11 +80,17 @@ class MainActivity : ComponentActivity() {
                 ) {
                     MainAppScaffold(
                         viewModel = viewModel,
+                        hasMicPermission = micGranted,
                         onRequestMicrophonePermission = { checkAndRequestMicPermission() }
                     )
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshMicPermission()
     }
 
     private fun checkAndRequestMicPermission() {
@@ -88,6 +105,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainAppScaffold(
     viewModel: VocalStudioViewModel,
+    hasMicPermission: Boolean,
     onRequestMicrophonePermission: () -> Unit
 ) {
     val currentTab by viewModel.currentTab.collectAsState()
@@ -95,11 +113,6 @@ fun MainAppScaffold(
     
     val primaryColor = MaterialTheme.colorScheme.primary
     val context = LocalContext.current
-
-    // Observe permission check
-    val hasMicPermission = ContextCompat.checkSelfPermission(
-        context, Manifest.permission.RECORD_AUDIO
-    ) == PackageManager.PERMISSION_GRANTED
 
     Scaffold(
         modifier = Modifier

@@ -22,10 +22,10 @@ class VocalStudioViewModel(application: Application) : AndroidViewModel(applicat
 
     // Screen Tabs navigation enum
     enum class StudioTab(val label: String) {
-        TRACKS("Studio Rack"),
-        ROUTING("Matrix Routing"),
-        MIXER("Console Mixer"),
-        SETTINGS("Studio Control")
+        TRACKS("Rack studio"),
+        ROUTING("Routage"),
+        MIXER("Mixage"),
+        SETTINGS("Réglages")
     }
 
     private val _currentTab = MutableStateFlow(StudioTab.TRACKS)
@@ -41,11 +41,11 @@ class VocalStudioViewModel(application: Application) : AndroidViewModel(applicat
 
     // Microphone selection options
     enum class MicrophoneInput(val id: String, val label: String) {
-        SYSTEM_DEFAULT("system_default", "Mic System/Default"),
-        INTERNAL_MIC("internal_mic", "Mic Internal"),
-        HEADSET_MIC("headset_mic", "Mic Headset/Wired"),
-        BLUETOOTH_MIC("bluetooth_mic", "Mic Bluetooth"),
-        USB_MIC("usb_mic", "Mic USB/External")
+        SYSTEM_DEFAULT("system_default", "Micro système/par défaut"),
+        INTERNAL_MIC("internal_mic", "Micro interne"),
+        HEADSET_MIC("headset_mic", "Micro casque/filaire"),
+        BLUETOOTH_MIC("bluetooth_mic", "Micro Bluetooth"),
+        USB_MIC("usb_mic", "Micro USB/externe")
     }
 
     private val _selectedMicInput = MutableStateFlow(MicrophoneInput.SYSTEM_DEFAULT)

@@ -1,5 +1,6 @@
 package com.example.ui.screens
 
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -19,11 +20,13 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.audio.AudioExporter
 import com.example.audio.AudioFileBridge
+import com.example.viewmodel.VocalStudioViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun AudioImportPanel() {
+fun AudioImportPanel(viewModel: VocalStudioViewModel) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -35,6 +38,12 @@ fun AudioImportPanel() {
     val duration by AudioFileBridge.durationSec.collectAsState()
     var loop by remember { mutableStateOf(AudioFileBridge.loopEnabled) }
 
+    val exporting by AudioExporter.exporting.collectAsState()
+    val exportProgress by AudioExporter.progress.collectAsState()
+    val exportMessage by AudioExporter.message.collectAsState()
+    var format by remember { mutableStateOf(AudioExporter.Format.WAV) }
+    var bitrate by remember { mutableStateOf(192) }
+
     val accent = MaterialTheme.colorScheme.primary
 
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
@@ -42,6 +51,16 @@ fun AudioImportPanel() {
             scope.launch { AudioFileBridge.load(context, uri) }
         }
     }
+
+    val onSavePicked: (Uri?) -> Unit = { uri ->
+        if (uri != null) {
+            scope.launch { AudioExporter.saveTo(context, uri) }
+        } else {
+            AudioExporter.discard()
+        }
+    }
+    val wavSaver = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("audio/wav")) { onSavePicked(it) }
+    val m4aSaver = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("audio/mp4")) { onSavePicked(it) }
 
     Column(
         modifier = Modifier
@@ -62,7 +81,7 @@ fun AudioImportPanel() {
 
         Button(
             onClick = { picker.launch(arrayOf("audio/*", "video/*")) },
-            enabled = !loading,
+            enabled = !loading && !exporting,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp)
@@ -160,6 +179,118 @@ fun AudioImportPanel() {
                 fontSize = 9.sp,
                 lineHeight = 12.sp
             )
+
+            // ---------- EXPORT DU SON TRAITÉ ----------
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(Color.White.copy(alpha = 0.08f))
+            )
+
+            Text(
+                text = "EXPORTER LE SON TRAITÉ (AVEC LES EFFETS)",
+                color = Color.LightGray,
+                fontSize = 9.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 0.5.sp
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                AudioExporter.Format.values().forEach { f ->
+                    val sel = format == f
+                    Surface(
+                        onClick = { format = f },
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(6.dp),
+                        color = if (sel) accent.copy(alpha = 0.25f) else MaterialTheme.colorScheme.surfaceVariant,
+                        border = BorderStroke(1.dp, if (sel) accent else Color.Transparent)
+                    ) {
+                        Text(
+                            text = f.label,
+                            color = if (sel) accent else Color.White,
+                            fontSize = 10.sp,
+                            fontWeight = if (sel) FontWeight.Bold else FontWeight.Normal,
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 10.dp),
+                            maxLines = 1
+                        )
+                    }
+                }
+            }
+
+            if (format == AudioExporter.Format.M4A) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Qualité :", color = Color.LightGray, fontSize = 10.sp)
+                    listOf(128, 192, 256).forEach { kb ->
+                        val sel = bitrate == kb
+                        Surface(
+                            onClick = { bitrate = kb },
+                            shape = RoundedCornerShape(6.dp),
+                            color = if (sel) accent.copy(alpha = 0.25f) else MaterialTheme.colorScheme.surfaceVariant,
+                            border = BorderStroke(1.dp, if (sel) accent else Color.Transparent)
+                        ) {
+                            Text(
+                                text = "$kb kbit/s",
+                                color = if (sel) accent else Color.White,
+                                fontSize = 10.sp,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp)
+                            )
+                        }
+                    }
+                }
+            }
+
+            Button(
+                onClick = {
+                    AudioExporter.clearMessage()
+                    scope.launch {
+                        val ok = AudioExporter.render(viewModel.audioProcessor, format, bitrate, context.cacheDir)
+                        if (ok) {
+                            val base = (fileName ?: "audio").substringBeforeLast('.')
+                            val suggested = base + "_effets." + format.ext
+                            if (format == AudioExporter.Format.WAV) wavSaver.launch(suggested) else m4aSaver.launch(suggested)
+                        }
+                    }
+                },
+                enabled = !exporting && !loading,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(46.dp)
+                    .testTag("export_audio_button"),
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = accent)
+            ) {
+                Icon(Icons.Default.Check, contentDescription = null, tint = Color.Black, modifier = Modifier.size(18.dp))
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = if (exporting) "TRAITEMENT… ${(exportProgress * 100).toInt()} %" else "EXPORTER EN ${format.ext.uppercase()}",
+                    color = Color.Black,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Black
+                )
+            }
+
+            if (exporting) {
+                LinearProgressIndicator(progress = exportProgress, modifier = Modifier.fillMaxWidth())
+            }
+
+            Text(
+                text = "Les réglages actuels des effets sont appliqués au fichier entier, plus 3 secondes de queue pour la réverbération et l'écho. Vous choisissez ensuite le dossier d'enregistrement.",
+                color = Color.Gray,
+                fontSize = 9.sp,
+                lineHeight = 12.sp
+            )
+
+            if (exportMessage != null) {
+                Text(text = exportMessage!!, color = Color(0xFF39FF14), fontSize = 10.sp)
+            }
         }
 
         if (message != null) {

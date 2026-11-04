@@ -70,7 +70,7 @@ fun RoutingScreen(
         ) {
             Column {
                 Text(
-                    text = "DIGITAL RACKS ROUTING MATRIX",
+                    text = "MATRICE DE ROUTAGE DES RACKS NUMÉRIQUES",
                     color = primaryColor,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
@@ -78,7 +78,7 @@ fun RoutingScreen(
                     fontFamily = FontFamily.Monospace
                 )
                 Text(
-                    text = "Alur Routing Sinyal Studio",
+                    text = "Flux de routage du signal studio",
                     color = Color.White,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Black
@@ -94,7 +94,7 @@ fun RoutingScreen(
 
         Spacer(modifier = Modifier.height(6.dp))
         Text(
-            text = "Ketuk modul di bawah untuk mengaktifkan atau membypass alur sinyal secara langsung. Sinyal audio neon menunjukkan aktivitas dsp aktif.",
+            text = "Touchez un module ci-dessous pour l'activer ou le mettre en bypass en direct. Le signal audio néon indique une activité DSP en cours.",
             color = LightMutedText,
             fontSize = 11.sp,
             lineHeight = 15.sp,
@@ -198,7 +198,7 @@ fun RoutingScreen(
             // Lay Interactive buttons over node coordinates for complete tactile experience
             // 1. INPUT NODES
             NodeButton(
-                title = "MIK INPUT",
+                title = "ENTRÉE MICRO",
                 isActive = isInputActive,
                 onClick = { viewModel.toggleInputActive() },
                 modifier = Modifier
@@ -209,7 +209,7 @@ fun RoutingScreen(
 
             // 2. DSP SYSTEM PROCESS CORES GATES
             NodeButton(
-                title = "EQ & NR",
+                title = "ÉGAL. & BRUIT",
                 isActive = effects.eq.isEnabled,
                 onClick = { viewModel.updateEffects { state -> state.eq.isEnabled = !state.eq.isEnabled } },
                 modifier = Modifier
@@ -219,7 +219,7 @@ fun RoutingScreen(
             )
 
             NodeButton(
-                title = "TUNER / HARMONI",
+                title = "TUNER / HARMONIE",
                 isActive = effects.pitchCorrection.isEnabled,
                 onClick = { viewModel.updateEffects { state -> state.pitchCorrection.isEnabled = !state.pitchCorrection.isEnabled } },
                 modifier = Modifier
@@ -229,7 +229,7 @@ fun RoutingScreen(
             )
 
             NodeButton(
-                title = "REVERB / ECHOS",
+                title = "RÉVERB. / ÉCHO",
                 isActive = effects.reverb.isEnabled,
                 onClick = { viewModel.updateEffects { state -> state.reverb.isEnabled = !state.reverb.isEnabled } },
                 modifier = Modifier
@@ -250,8 +250,8 @@ fun RoutingScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("OUT SYSTEM", color = primaryColor, fontSize = 9.sp, fontWeight = FontWeight.Bold)
-                    Text("STEREO TRACK", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Black)
+                    Text("SORTIE SYSTÈME", color = primaryColor, fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                    Text("PISTE STÉRÉO", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Black)
                 }
             }
         }
@@ -266,7 +266,7 @@ fun RoutingScreen(
             Icon(Icons.Default.CheckCircle, contentDescription = null, tint = primaryColor, modifier = Modifier.size(16.dp))
             Spacer(modifier = Modifier.width(6.dp))
             Text(
-                "Sinyal dialirkan dalam format Stereo 16-bit PCM Real-time.",
+                "Signal acheminé en stéréo PCM 16 bits, en temps réel.",
                 color = LightMutedText,
                 fontSize = 11.sp
             )

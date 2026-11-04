@@ -948,15 +948,14 @@ fun HeaderStatsDeck(viewModel: VocalStudioViewModel) {
         WaveTheme.EMERALD_PRO -> EmeraldProPrimary
     }
 
-    Row(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f))
             .border(1.dp, primaryColor.copy(alpha = 0.15f), RoundedCornerShape(12.dp))
             .padding(14.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Column {
             Text(
@@ -975,9 +974,12 @@ fun HeaderStatsDeck(viewModel: VocalStudioViewModel) {
                 letterSpacing = 0.5.sp
             )
         }
-        
+
         // Monitoring Stats Grid block
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             StatBlock(label = "ÉCHANTILL.", value = "44.1 kHz")
             StatBlock(label = "LATENCE", value = "$masterLatency ms")
             StatBlock(label = "PROCESSEUR", value = "$masterCpu%", color = if (masterCpu > 15) PeakClipRed else primaryColor)
@@ -988,8 +990,8 @@ fun HeaderStatsDeck(viewModel: VocalStudioViewModel) {
 @Composable
 fun StatBlock(label: String, value: String, color: Color = Color.White) {
     Column(horizontalAlignment = Alignment.End) {
-        Text(text = label, color = LightMutedText, fontSize = 8.sp, fontWeight = FontWeight.Bold)
-        Text(text = value, color = color, fontSize = 11.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+        Text(text = label, color = LightMutedText, fontSize = 8.sp, fontWeight = FontWeight.Bold, maxLines = 1, softWrap = false)
+        Text(text = value, color = color, fontSize = 11.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace, maxLines = 1, softWrap = false)
     }
 }
 

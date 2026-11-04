@@ -55,7 +55,7 @@ fun SettingsScreen(
         ) {
             Column {
                 Text(
-                    text = "HARDWARE & CONTEXT CONTROL",
+                    text = "CONTRÔLE DU MATÉRIEL ET DU CONTEXTE",
                     color = primaryColor,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
@@ -63,7 +63,7 @@ fun SettingsScreen(
                     fontFamily = FontFamily.Monospace
                 )
                 Text(
-                    text = "Studio Configuration",
+                    text = "Configuration du studio",
                     color = Color.White,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Black
@@ -88,7 +88,7 @@ fun SettingsScreen(
         ) {
             Column(modifier = Modifier.padding(14.dp)) {
                 Text(
-                    text = "DSP BUFFER SIZE (LATENCY OPTIMIZATION)",
+                    text = "TAILLE DU BUFFER DSP (OPTIMISATION DE LA LATENCE)",
                     color = primaryColor,
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
@@ -96,7 +96,7 @@ fun SettingsScreen(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Gunakan fader ini untuk mengatur ukuran buffer dari 0 sampai 124 secara real-time. Semakin rendah nilai fader, semakin dekat latency ke 0 ms (tanpa jeda).",
+                    text = "Utilisez ce curseur pour régler la taille du buffer de 0 à 124 en temps réel. Plus la valeur est basse, plus la latence se rapproche de 0 ms (sans délai).",
                     color = LightMutedText,
                     fontSize = 11.sp,
                     lineHeight = 15.sp
@@ -112,14 +112,14 @@ fun SettingsScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "UKURAN CHUNK BUFFER:",
+                        text = "TAILLE DU BLOC TAMPON :",
                         color = LightMutedText,
                         fontSize = 10.sp,
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = if (bufferSizeState == 0) "0 (Zero Latency Mode, ~0.2ms)" 
-                               else "$bufferSizeState Frames (${((bufferSizeState * 1000f / 44100f) * 10).roundToInt() / 10f} ms)",
+                        text = if (bufferSizeState == 0) "0 (mode latence zéro, ~0.2 ms)" 
+                               else "$bufferSizeState échantillons (${((bufferSizeState * 1000f / 44100f) * 10).roundToInt() / 10f} ms)",
                         color = primaryColor,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
@@ -167,7 +167,7 @@ fun SettingsScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
-                                    text = if (size == 0) "0 (Zero)" else "$size", 
+                                    text = if (size == 0) "0 (zéro)" else "$size", 
                                     color = if (isSel) primaryColor else Color.White, 
                                     fontSize = 11.sp, 
                                     fontWeight = FontWeight.Bold
@@ -201,7 +201,7 @@ fun SettingsScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "STUDIO VISUAL THEME SKINS",
+                        text = "THÈMES VISUELS DU STUDIO",
                         color = primaryColor,
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold,
@@ -213,7 +213,7 @@ fun SettingsScreen(
                 Spacer(modifier = Modifier.height(4.dp))
                 
                 Text(
-                    text = "Ganti penampilan antarmuka DAW studio sesuai suasana rekaman favorit Anda.",
+                    text = "Changez l'apparence de l'interface du studio selon l'ambiance de votre enregistrement.",
                     color = LightMutedText,
                     fontSize = 11.sp
                 )
@@ -252,7 +252,7 @@ fun SettingsScreen(
 
         // --- SECTION 3: SYSTEM INFO BLOCK ---
         Text(
-            text = "HARDWARE INFO PROFILE",
+            text = "INFORMATIONS SUR LE MATÉRIEL",
             color = LightMutedText,
             fontSize = 10.sp,
             fontWeight = FontWeight.Bold,
@@ -268,10 +268,10 @@ fun SettingsScreen(
                 .background(Color.Black.copy(alpha = 0.4f))
                 .padding(12.dp)
         ) {
-            InfoRow(label = "Engine Version", value = "BRO-DSP v2.4.1 (64-Bit Stable)")
-            InfoRow(label = "Platform OS", value = "Android 8.0+ Oreo (Tested on Android 15)")
-            InfoRow(label = "Digital Audio Interface", value = "OpenSL ES / AAudio Audio HAL")
-            InfoRow(label = "Headset Detection", value = "Wired Headset / Bluetooth profile sync")
+            InfoRow(label = "Version du moteur", value = "BRO-DSP v2.4.1 (64 bits stable)")
+            InfoRow(label = "Système", value = "Android 8.0+ Oreo (testé sur Android 15)")
+            InfoRow(label = "Interface audio numérique", value = "OpenSL ES / AAudio Audio HAL")
+            InfoRow(label = "Détection du casque", value = "Casque filaire / profil Bluetooth")
         }
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -363,7 +363,7 @@ fun BrandSignatureWatermark(modifier: Modifier = Modifier) {
             textAlign = TextAlign.Center
         )
         Text(
-            text = "© 2026 Studio DAW Portable • All Rights Reserved",
+            text = "© 2026 Studio DAW Portable • Tous droits réservés",
             fontSize = 7.sp,
             color = Color.Gray.copy(alpha = 0.4f),
             textAlign = TextAlign.Center,

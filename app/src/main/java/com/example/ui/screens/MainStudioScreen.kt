@@ -1033,7 +1033,7 @@ fun InputMonitoringController(
                     horizontalAlignment = Alignment.Start
                 ) {
                     Text(
-                        text = if (isInputActive) "TRAITEMENT VOCAL ACTIF" else "ÉCOUTE DU MICRO DÉSACTIVÉE",
+                        text = if (isInputActive) "VOIX ACTIVE" else "MICRO DÉSACTIVÉ",
                         color = if (isInputActive) DarkNeonPrimary else PeakClipRed,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Black,

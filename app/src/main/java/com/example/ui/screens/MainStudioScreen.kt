@@ -80,7 +80,7 @@ fun MainStudioScreen(
         Spacer(modifier = Modifier.height(10.dp))
 
         // --- 2b. IMPORT D'UN FICHIER AUDIO DU TÉLÉPHONE ---
-        AudioImportPanel()
+        AudioImportPanel(viewModel)
 
         Spacer(modifier = Modifier.height(14.dp))
 
@@ -959,7 +959,7 @@ fun HeaderStatsDeck(viewModel: VocalStudioViewModel) {
     ) {
         Column {
             Text(
-                text = "MOHAMED AUDIO LABS",
+                text = "MAHFOUD AUDIO LABS",
                 color = primaryColor.copy(alpha = 0.8f),
                 fontSize = 9.sp,
                 fontWeight = FontWeight.Bold,
@@ -967,7 +967,7 @@ fun HeaderStatsDeck(viewModel: VocalStudioViewModel) {
                 fontFamily = FontFamily.Monospace
             )
             Text(
-                text = "EFFETS VOCAUX MOHAMED",
+                text = "EFFETS VOCAUX MAHFOUD",
                 color = Color.White,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Black,

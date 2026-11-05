@@ -46,9 +46,20 @@ class MainActivity : ComponentActivity() {
 
     // État observable de l'autorisation du micro (le bandeau disparaît dès qu'elle est accordée)
     private var micGranted by mutableStateOf(false)
+    private var micWasMissing = false
 
     private fun refreshMicPermission() {
         micGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+        if (!micGranted) {
+            micWasMissing = true
+        } else if (micWasMissing) {
+            // L'autorisation vient d'être accordée alors que le micro n'avait pas pu s'ouvrir : on relance le moteur audio
+            micWasMissing = false
+            if (!viewModel.audioProcessor.micReady) {
+                viewModel.audioProcessor.stop()
+                viewModel.audioProcessor.start(applicationContext)
+            }
+        }
     }
 
     // Standard Android Microphone permission launcher

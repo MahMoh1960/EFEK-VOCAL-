@@ -365,6 +365,7 @@ object AudioExporter {
         _progress.value = 0f
         _message.value = null
         val tmp = File(cacheDir, "export_tmp." + format.ext)
+        ShareBridge.pendingMime = format.mime
         var current: PcmSink? = null
         try {
             if (tmp.exists()) tmp.delete()
@@ -435,6 +436,7 @@ object AudioExporter {
                 f.inputStream().use { it.copyTo(out) }
             }
             _message.value = "Fichier enregistré avec succès."
+            ShareBridge.onSaved(uri)
         } catch (e: Exception) {
             _message.value = "Échec de l'enregistrement : ${e.message ?: "erreur inconnue"}"
         } finally {

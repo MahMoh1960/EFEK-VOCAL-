@@ -51,6 +51,89 @@ class AudioProcessor {
     private val _vuPeak = MutableStateFlow(Pair(0.02f, 0.02f)) // Peak levels hold
     val vuPeak: StateFlow<Pair<Float, Float>> = _vuPeak
 
+    // ---------- ENREGISTREMENT DE LA SORTIE TRAITÉE (stéréo 16 bits entrelacé) ----------
+    private val REC_CHUNK = 44100 * 2 * 5          // 5 s par bloc mémoire
+    private val REC_MAX = 44100 * 2 * 300          // 5 minutes maximum
+    private val recLock = Any()
+    private val recChunks = ArrayList<ShortArray>()
+    private var recPos = 0
+    private var recTotal = 0
+    @Volatile private var recording = false
+
+    private val _isRecording = MutableStateFlow(false)
+    val isRecording: StateFlow<Boolean> = _isRecording
+    private val _recordFrames = MutableStateFlow(0)
+    val recordFrames: StateFlow<Int> = _recordFrames
+
+    fun startRecording() {
+        synchronized(recLock) {
+            recChunks.clear()
+            recPos = 0
+            recTotal = 0
+        }
+        _recordFrames.value = 0
+        recording = true
+        _isRecording.value = true
+    }
+
+    fun stopRecording() {
+        recording = false
+        _isRecording.value = false
+        _recordFrames.value = synchronized(recLock) { recTotal / 2 }
+    }
+
+    fun clearRecording() {
+        recording = false
+        _isRecording.value = false
+        synchronized(recLock) {
+            recChunks.clear()
+            recPos = 0
+            recTotal = 0
+        }
+        _recordFrames.value = 0
+    }
+
+    private fun appendRecording(src: ShortArray, count: Int) {
+        synchronized(recLock) {
+            var off = 0
+            while (off < count) {
+                if (recChunks.isEmpty() || recPos >= REC_CHUNK) {
+                    if (recTotal >= REC_MAX) {
+                        recording = false
+                        _isRecording.value = false
+                        return
+                    }
+                    recChunks.add(ShortArray(REC_CHUNK))
+                    recPos = 0
+                }
+                val c = recChunks[recChunks.size - 1]
+                val n = min(REC_CHUNK - recPos, count - off)
+                System.arraycopy(src, off, c, recPos, n)
+                recPos += n
+                off += n
+                recTotal += n
+            }
+        }
+    }
+
+    /** Envoie l'enregistrement (stéréo entrelacé) à [sink], par gros blocs. */
+    fun readRecording(sink: (ShortArray, Int) -> Unit, onProgress: (Float) -> Unit) {
+        val snap = synchronized(recLock) { Pair(ArrayList(recChunks), recTotal) }
+        val chunks = snap.first
+        val total = snap.second
+        var left = total
+        var idx = 0
+        while (left > 0 && idx < chunks.size) {
+            val c = chunks[idx]
+            val n = min(c.size, left)
+            sink(c, n)
+            left -= n
+            idx++
+            onProgress((total - left).toFloat() / total.toFloat())
+        }
+        onProgress(1f)
+    }
+
     // Audio Thread
     private var audioJob: Job? = null
     private val scope = CoroutineScope(Dispatchers.Default)
@@ -763,6 +846,7 @@ class AudioProcessor {
 
                 val dspStart = System.nanoTime()
                 processBlock(inBuf, outBuf, currentBufferSize, isInputActive || filePlaying)
+                if (recording) appendRecording(outBuf, currentBufferSize * 2)
                 val rmsLeftSum = blkRmsL
                 val rmsRightSum = blkRmsR
 
@@ -782,6 +866,8 @@ class AudioProcessor {
                 val now = System.currentTimeMillis()
                 if (now - lastSpectrumTime > 25) {
                     lastSpectrumTime = now
+
+                    if (recording) _recordFrames.value = recTotal / 2
 
                     val rmsL = sqrt(rmsLeftSum / currentBufferSize).toFloat().coerceIn(0.005f, 1.0f)
                     val rmsR = sqrt(rmsRightSum / currentBufferSize).toFloat().coerceIn(0.005f, 1.0f)

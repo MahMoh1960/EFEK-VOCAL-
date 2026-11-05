@@ -165,6 +165,83 @@ class AacSink(file: File, private val rate: Int, bitrate: Int) : PcmSink {
     }
 }
 
+/**
+ * Encode en MP3 avec la bibliothèque LAME (TAndroidLame).
+ * Appels par réflexion : si la bibliothèque est absente, seul l'export MP3 échoue (message clair), jamais la compilation.
+ */
+class Mp3Sink(file: File, rate: Int, bitrateKbps: Int) : PcmSink {
+    private val out = BufferedOutputStream(FileOutputStream(file), 1 shl 16)
+    private var lame: Any? = null
+    private var encodeM: java.lang.reflect.Method? = null
+    private var flushM: java.lang.reflect.Method? = null
+    private var closeM: java.lang.reflect.Method? = null
+    private var mp3 = ByteArray(0)
+
+    private fun loadClass(vararg names: String): Class<*> {
+        for (n in names) {
+            try { return Class.forName(n) } catch (_: Throwable) { }
+        }
+        throw IllegalStateException("bibliothèque MP3 introuvable")
+    }
+
+    private fun setInt(target: Any, name: String, value: Int) {
+        val m = target.javaClass.methods.firstOrNull { it.name == name && it.parameterTypes.size == 1 }
+            ?: throw IllegalStateException("méthode $name introuvable")
+        m.invoke(target, value)
+    }
+
+    init {
+        try {
+            val builderCls = loadClass(
+                "com.naman14.androidlame.LameBuilder",
+                "com.naman.androidlame.LameBuilder"
+            )
+            val lameCls = loadClass(
+                "com.naman14.androidlame.AndroidLame",
+                "com.naman.androidlame.AndroidLame"
+            )
+            val builder = builderCls.getDeclaredConstructor().newInstance()
+            setInt(builder, "setInSampleRate", rate)
+            setInt(builder, "setOutChannels", 2)
+            setInt(builder, "setOutBitrate", bitrateKbps)
+            setInt(builder, "setOutSampleRate", rate)
+            try { setInt(builder, "setQuality", 5) } catch (_: Throwable) { }
+            val instance = lameCls.getConstructor(builderCls).newInstance(builder)
+            lame = instance
+            encodeM = lameCls.methods.first { it.name == "encodeBufferInterLeaved" && it.parameterTypes.size == 3 }
+            flushM = lameCls.methods.first { it.name == "flush" && it.parameterTypes.size == 1 }
+            closeM = lameCls.methods.firstOrNull { it.name == "close" && it.parameterTypes.isEmpty() }
+        } catch (e: Throwable) {
+            try { out.close() } catch (_: Exception) { }
+            throw IllegalStateException("MP3 indisponible (" + (e.cause?.message ?: e.message ?: "erreur") + ")")
+        }
+    }
+
+    override fun write(buf: ShortArray, count: Int) {
+        val frames = count / 2
+        if (frames <= 0) return
+        val need = frames * 5 / 4 + 7200
+        if (mp3.size < need) mp3 = ByteArray(need)
+        val pcm = if (buf.size == count) buf else buf.copyOf(count)
+        val n = encodeM!!.invoke(lame, pcm, frames, mp3) as Int
+        if (n > 0) out.write(mp3, 0, n)
+    }
+
+    override fun finish() {
+        if (mp3.size < 8192) mp3 = ByteArray(8192)
+        val n = flushM!!.invoke(lame, mp3) as Int
+        if (n > 0) out.write(mp3, 0, n)
+        try { closeM?.invoke(lame) } catch (_: Throwable) { }
+        out.flush()
+        out.close()
+    }
+
+    override fun abort() {
+        try { closeM?.invoke(lame) } catch (_: Throwable) { }
+        try { out.close() } catch (_: Exception) { }
+    }
+}
+
 /** Applique gain (normalisation) et fondus, puis transmet au destinataire final. Ne modifie jamais le tampon reçu. */
 class ShapeSink(
     private val inner: PcmSink,
@@ -201,8 +278,9 @@ class ShapeSink(
 /** Orchestre l'export : traite le fichier importé (ou l'enregistrement), puis l'enregistre. */
 object AudioExporter {
     enum class Format(val label: String, val ext: String, val mime: String) {
-        WAV("WAV (sans perte)", "wav", "audio/wav"),
-        M4A("M4A / AAC (compressé)", "m4a", "audio/mp4")
+        WAV("WAV", "wav", "audio/wav"),
+        M4A("M4A / AAC", "m4a", "audio/mp4"),
+        MP3("MP3", "mp3", "audio/mpeg")
     }
 
     private val _exporting = MutableStateFlow(false)
@@ -313,10 +391,10 @@ object AudioExporter {
                 scale = 0.5f
             }
 
-            val inner: PcmSink = if (format == Format.WAV) {
-                WavSink(tmp, totalFrames, rate)
-            } else {
-                AacSink(tmp, rate, bitrateKbps * 1000)
+            val inner: PcmSink = when (format) {
+                Format.WAV -> WavSink(tmp, totalFrames, rate)
+                Format.M4A -> AacSink(tmp, rate, bitrateKbps * 1000)
+                Format.MP3 -> Mp3Sink(tmp, rate, bitrateKbps)
             }
             val fi = min(fadeInSec * rate, totalFrames / 2)
             val fo = min(fadeOutSec * rate, totalFrames / 2)

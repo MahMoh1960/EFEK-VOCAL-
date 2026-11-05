@@ -468,5 +468,8 @@ fun AudioImportPanel(viewModel: VocalStudioViewModel) {
         if (message != null) {
             Text(text = message!!, color = Color(0xFFFFCC00), fontSize = 10.sp)
         }
+
+        // Fond musical, écoute, partage et préréglages (fichier ExtrasPanel.kt)
+        ExtrasPanel(viewModel)
     }
 }

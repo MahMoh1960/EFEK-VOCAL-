@@ -107,6 +107,14 @@ fun AudioImportPanel(viewModel: VocalStudioViewModel) {
     }
     val wavSaver = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("audio/wav")) { onSavePicked(it) }
     val m4aSaver = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("audio/mp4")) { onSavePicked(it) }
+    val mp3Saver = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("audio/mpeg")) { onSavePicked(it) }
+    val launchSaver: (AudioExporter.Format, String) -> Unit = { f, name ->
+        when (f) {
+            AudioExporter.Format.WAV -> wavSaver.launch(name)
+            AudioExporter.Format.M4A -> m4aSaver.launch(name)
+            AudioExporter.Format.MP3 -> mp3Saver.launch(name)
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -341,7 +349,7 @@ fun AudioImportPanel(viewModel: VocalStudioViewModel) {
                 }
             }
 
-            if (format == AudioExporter.Format.M4A) {
+            if (format != AudioExporter.Format.WAV) {
                 OptionChips(
                     label = "Qualité",
                     options = listOf(128, 192, 256),
@@ -386,7 +394,7 @@ fun AudioImportPanel(viewModel: VocalStudioViewModel) {
                             if (ok) {
                                 val base = (fileName ?: "audio").substringBeforeLast('.')
                                 val suggested = base + "_effets." + format.ext
-                                if (format == AudioExporter.Format.WAV) wavSaver.launch(suggested) else m4aSaver.launch(suggested)
+                                launchSaver(format, suggested)
                             }
                         }
                     },
@@ -417,7 +425,7 @@ fun AudioImportPanel(viewModel: VocalStudioViewModel) {
                             val ok = AudioExporter.renderRecording(processor, format, bitrate, context.cacheDir, normalize, fadeIn, fadeOut)
                             if (ok) {
                                 val suggested = "enregistrement_effets." + format.ext
-                                if (format == AudioExporter.Format.WAV) wavSaver.launch(suggested) else m4aSaver.launch(suggested)
+                                launchSaver(format, suggested)
                             }
                         }
                     },

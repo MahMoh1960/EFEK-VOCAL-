@@ -26,9 +26,47 @@ import com.example.viewmodel.VocalStudioViewModel
 import kotlinx.coroutines.launch
 
 @Composable
+private fun OptionChips(
+    label: String,
+    options: List<Int>,
+    selected: Int,
+    suffix: String,
+    onSelect: (Int) -> Unit
+) {
+    val accent = MaterialTheme.colorScheme.primary
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(label, color = Color.LightGray, fontSize = 10.sp, modifier = Modifier.width(96.dp))
+        options.forEach { v ->
+            val sel = selected == v
+            Surface(
+                onClick = { onSelect(v) },
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(6.dp),
+                color = if (sel) accent.copy(alpha = 0.25f) else MaterialTheme.colorScheme.surfaceVariant,
+                border = BorderStroke(1.dp, if (sel) accent else Color.Transparent)
+            ) {
+                Text(
+                    text = if (v == 0) "Aucun" else "$v $suffix",
+                    color = if (sel) accent else Color.White,
+                    fontSize = 10.sp,
+                    maxLines = 1,
+                    softWrap = false,
+                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun AudioImportPanel(viewModel: VocalStudioViewModel) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val processor = viewModel.audioProcessor
 
     val fileName by AudioFileBridge.fileName.collectAsState()
     val playing by AudioFileBridge.playing.collectAsState()
@@ -43,6 +81,14 @@ fun AudioImportPanel(viewModel: VocalStudioViewModel) {
     val exportMessage by AudioExporter.message.collectAsState()
     var format by remember { mutableStateOf(AudioExporter.Format.WAV) }
     var bitrate by remember { mutableStateOf(192) }
+    var normalize by remember { mutableStateOf(false) }
+    var fadeIn by remember { mutableStateOf(0) }
+    var fadeOut by remember { mutableStateOf(0) }
+
+    val isRecording by processor.isRecording.collectAsState()
+    val recordFrames by processor.recordFrames.collectAsState()
+    val recSeconds = recordFrames / processor.sampleRate
+    val hasRecording = recordFrames > 0 && !isRecording
 
     val accent = MaterialTheme.colorScheme.primary
 
@@ -179,8 +225,82 @@ fun AudioImportPanel(viewModel: VocalStudioViewModel) {
                 fontSize = 9.sp,
                 lineHeight = 12.sp
             )
+        }
 
-            // ---------- EXPORT DU SON TRAITÉ ----------
+        // ---------- ENREGISTREMENT DE LA SORTIE (MICRO OU FICHIER) ----------
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(Color.White.copy(alpha = 0.08f))
+        )
+
+        Text(
+            text = "ENREGISTRER LA SORTIE (MICRO OU FICHIER, AVEC LES EFFETS)",
+            color = Color.LightGray,
+            fontSize = 9.sp,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 0.5.sp
+        )
+
+        Button(
+            onClick = {
+                if (isRecording) processor.stopRecording() else processor.startRecording()
+            },
+            enabled = !exporting,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(46.dp)
+                .testTag("record_button"),
+            shape = RoundedCornerShape(10.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (isRecording) Color(0xFFFF3B30) else accent.copy(alpha = 0.15f)
+            ),
+            border = BorderStroke(1.5.dp, if (isRecording) Color(0xFFFF3B30) else accent)
+        ) {
+            Icon(
+                if (isRecording) Icons.Default.Close else Icons.Default.PlayArrow,
+                contentDescription = null,
+                tint = if (isRecording) Color.White else accent,
+                modifier = Modifier.size(18.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = if (isRecording) {
+                    "ARRÊTER  •  ${recSeconds / 60}:${(recSeconds % 60).toString().padStart(2, '0')}"
+                } else "DÉMARRER L'ENREGISTREMENT",
+                color = if (isRecording) Color.White else accent,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Black
+            )
+        }
+
+        if (hasRecording) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Enregistrement prêt : ${recSeconds / 60}:${(recSeconds % 60).toString().padStart(2, '0')}",
+                    color = Color(0xFF39FF14),
+                    fontSize = 10.sp
+                )
+                TextButton(onClick = { processor.clearRecording() }) {
+                    Text("SUPPRIMER", color = Color(0xFFFF3B30), fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                }
+            }
+        }
+
+        Text(
+            text = "Enregistre ce que vous entendez : votre voix au micro avec les effets, ou le fichier importé en lecture. Durée maximale : 5 minutes.",
+            color = Color.Gray,
+            fontSize = 9.sp,
+            lineHeight = 12.sp
+        )
+
+        // ---------- EXPORT DU SON TRAITÉ ----------
+        if (fileName != null || hasRecording) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -189,7 +309,7 @@ fun AudioImportPanel(viewModel: VocalStudioViewModel) {
             )
 
             Text(
-                text = "EXPORTER LE SON TRAITÉ (AVEC LES EFFETS)",
+                text = "EXPORTER LE SON TRAITÉ",
                 color = Color.LightGray,
                 fontSize = 9.sp,
                 fontWeight = FontWeight.Bold,
@@ -222,59 +342,103 @@ fun AudioImportPanel(viewModel: VocalStudioViewModel) {
             }
 
             if (format == AudioExporter.Format.M4A) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text("Qualité :", color = Color.LightGray, fontSize = 10.sp)
-                    listOf(128, 192, 256).forEach { kb ->
-                        val sel = bitrate == kb
-                        Surface(
-                            onClick = { bitrate = kb },
-                            shape = RoundedCornerShape(6.dp),
-                            color = if (sel) accent.copy(alpha = 0.25f) else MaterialTheme.colorScheme.surfaceVariant,
-                            border = BorderStroke(1.dp, if (sel) accent else Color.Transparent)
-                        ) {
-                            Text(
-                                text = "$kb kbit/s",
-                                color = if (sel) accent else Color.White,
-                                fontSize = 10.sp,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp)
-                            )
+                OptionChips(
+                    label = "Qualité",
+                    options = listOf(128, 192, 256),
+                    selected = bitrate,
+                    suffix = "kb/s",
+                    onSelect = { bitrate = it }
+                )
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text("Normaliser le volume (−1 dB)", color = Color.LightGray, fontSize = 10.sp)
+                Switch(checked = normalize, onCheckedChange = { normalize = it })
+            }
+
+            OptionChips(
+                label = "Fondu d'entrée",
+                options = listOf(0, 1, 2, 3),
+                selected = fadeIn,
+                suffix = "s",
+                onSelect = { fadeIn = it }
+            )
+            OptionChips(
+                label = "Fondu de sortie",
+                options = listOf(0, 1, 2, 3),
+                selected = fadeOut,
+                suffix = "s",
+                onSelect = { fadeOut = it }
+            )
+
+            val busyLabel = "TRAITEMENT… ${(exportProgress * 100).toInt()} %"
+
+            if (fileName != null) {
+                Button(
+                    onClick = {
+                        AudioExporter.clearMessage()
+                        scope.launch {
+                            val ok = AudioExporter.render(processor, format, bitrate, context.cacheDir, normalize, fadeIn, fadeOut)
+                            if (ok) {
+                                val base = (fileName ?: "audio").substringBeforeLast('.')
+                                val suggested = base + "_effets." + format.ext
+                                if (format == AudioExporter.Format.WAV) wavSaver.launch(suggested) else m4aSaver.launch(suggested)
+                            }
                         }
-                    }
+                    },
+                    enabled = !exporting && !loading && !isRecording,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(46.dp)
+                        .testTag("export_audio_button"),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = accent)
+                ) {
+                    Icon(Icons.Default.Check, contentDescription = null, tint = Color.Black, modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = if (exporting) busyLabel else "EXPORTER LE FICHIER EN ${format.ext.uppercase()}",
+                        color = Color.Black,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Black
+                    )
                 }
             }
 
-            Button(
-                onClick = {
-                    AudioExporter.clearMessage()
-                    scope.launch {
-                        val ok = AudioExporter.render(viewModel.audioProcessor, format, bitrate, context.cacheDir)
-                        if (ok) {
-                            val base = (fileName ?: "audio").substringBeforeLast('.')
-                            val suggested = base + "_effets." + format.ext
-                            if (format == AudioExporter.Format.WAV) wavSaver.launch(suggested) else m4aSaver.launch(suggested)
+            if (hasRecording) {
+                Button(
+                    onClick = {
+                        AudioExporter.clearMessage()
+                        scope.launch {
+                            val ok = AudioExporter.renderRecording(processor, format, bitrate, context.cacheDir, normalize, fadeIn, fadeOut)
+                            if (ok) {
+                                val suggested = "enregistrement_effets." + format.ext
+                                if (format == AudioExporter.Format.WAV) wavSaver.launch(suggested) else m4aSaver.launch(suggested)
+                            }
                         }
-                    }
-                },
-                enabled = !exporting && !loading,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(46.dp)
-                    .testTag("export_audio_button"),
-                shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = accent)
-            ) {
-                Icon(Icons.Default.Check, contentDescription = null, tint = Color.Black, modifier = Modifier.size(18.dp))
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = if (exporting) "TRAITEMENT… ${(exportProgress * 100).toInt()} %" else "EXPORTER EN ${format.ext.uppercase()}",
-                    color = Color.Black,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Black
-                )
+                    },
+                    enabled = !exporting && !loading,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(46.dp)
+                        .testTag("export_recording_button"),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = accent)
+                ) {
+                    Icon(Icons.Default.Check, contentDescription = null, tint = Color.Black, modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = if (exporting) busyLabel else "EXPORTER L'ENREGISTREMENT EN ${format.ext.uppercase()}",
+                        color = Color.Black,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Black,
+                        maxLines = 1
+                    )
+                }
             }
 
             if (exporting) {
@@ -282,7 +446,7 @@ fun AudioImportPanel(viewModel: VocalStudioViewModel) {
             }
 
             Text(
-                text = "Les réglages actuels des effets sont appliqués au fichier entier, plus 3 secondes de queue pour la réverbération et l'écho. Vous choisissez ensuite le dossier d'enregistrement.",
+                text = "Le fichier importé reçoit les réglages actuels des effets, plus 3 secondes de queue pour la réverbération et l'écho. Vous choisissez ensuite le dossier d'enregistrement.",
                 color = Color.Gray,
                 fontSize = 9.sp,
                 lineHeight = 12.sp

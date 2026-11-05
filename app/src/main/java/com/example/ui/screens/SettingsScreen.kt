@@ -101,11 +101,11 @@ fun SettingsScreen(
                     fontSize = 11.sp,
                     lineHeight = 15.sp
                 )
-                
+
                 Spacer(modifier = Modifier.height(14.dp))
 
                 val bufferSizeState by viewModel.bufferSize.collectAsState()
-                
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -118,7 +118,7 @@ fun SettingsScreen(
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = if (bufferSizeState == 0) "0 (mode latence zéro, ~0.2 ms)" 
+                        text = if (bufferSizeState == 0) "0 (mode latence zéro, ~0.2 ms)"
                                else "$bufferSizeState échantillons (${((bufferSizeState * 1000f / 44100f) * 10).roundToInt() / 10f} ms)",
                         color = primaryColor,
                         fontSize = 11.sp,
@@ -126,9 +126,9 @@ fun SettingsScreen(
                         fontFamily = FontFamily.Monospace
                     )
                 }
-                
+
                 Spacer(modifier = Modifier.height(6.dp))
-                
+
                 Slider(
                     value = bufferSizeState.toFloat(),
                     onValueChange = { newVal ->
@@ -154,7 +154,7 @@ fun SettingsScreen(
                     listOf(0, 16, 32, 64, 124).forEach { size ->
                         val isSel = bufferSizeState == size
                         val glowStroke = if (isSel) BorderStroke(1.dp, primaryColor) else BorderStroke(1.dp, Color.Transparent)
-                        
+
                         Surface(
                             onClick = { viewModel.setBufferSize(size) },
                             modifier = Modifier.weight(1f),
@@ -167,9 +167,9 @@ fun SettingsScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
-                                    text = if (size == 0) "0 (zéro)" else "$size", 
-                                    color = if (isSel) primaryColor else Color.White, 
-                                    fontSize = 11.sp, 
+                                    text = if (size == 0) "0 (zéro)" else "$size",
+                                    color = if (isSel) primaryColor else Color.White,
+                                    fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold
                                 )
                                 Text(
@@ -209,9 +209,9 @@ fun SettingsScreen(
                     )
                     Icon(Icons.Default.Build, contentDescription = null, tint = primaryColor, modifier = Modifier.size(16.dp))
                 }
-                
+
                 Spacer(modifier = Modifier.height(4.dp))
-                
+
                 Text(
                     text = "Changez l'apparence de l'interface du studio selon l'ambiance de votre enregistrement.",
                     color = LightMutedText,
@@ -268,7 +268,7 @@ fun SettingsScreen(
                 .background(Color.Black.copy(alpha = 0.4f))
                 .padding(12.dp)
         ) {
-            InfoRow(label = "Version du moteur", value = "BRO-DSP v2.4.1 (64 bits stable)")
+            InfoRow(label = "Version du moteur", value = "Moteur Mahfoud (64 bits stable)")
             InfoRow(label = "Système", value = "Android 8.0+ Oreo (testé sur Android 15)")
             InfoRow(label = "Interface audio numérique", value = "OpenSL ES / AAudio Audio HAL")
             InfoRow(label = "Détection du casque", value = "Casque filaire / profil Bluetooth")
@@ -354,7 +354,7 @@ fun BrandSignatureWatermark(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Bro Audio Banjarnegara",
+            text = "Mahfoud Audio Labs",
             fontSize = 10.sp,
             fontWeight = FontWeight.SemiBold,
             color = LightMutedText.copy(alpha = 0.5f),
@@ -363,7 +363,7 @@ fun BrandSignatureWatermark(modifier: Modifier = Modifier) {
             textAlign = TextAlign.Center
         )
         Text(
-            text = "© 2026 Studio DAW Portable • Tous droits réservés",
+            text = "© 2026 Mahfoud • Tous droits réservés",
             fontSize = 7.sp,
             color = Color.Gray.copy(alpha = 0.4f),
             textAlign = TextAlign.Center,

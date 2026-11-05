@@ -60,6 +60,9 @@ class AudioProcessor {
     private var recTotal = 0
     @Volatile private var recording = false
 
+    // Vrai quand le micro matériel est réellement ouvert (sert à relancer le moteur après l'autorisation)
+    @Volatile var micReady = false
+
     private val _isRecording = MutableStateFlow(false)
     val isRecording: StateFlow<Boolean> = _isRecording
     private val _recordFrames = MutableStateFlow(0)
@@ -722,6 +725,7 @@ class AudioProcessor {
             if (audioRecord.state == AudioRecord.STATE_INITIALIZED) {
                 audioRecord.startRecording()
                 activeAudioRecord = audioRecord
+                micReady = true
                 appContext?.let { updateActivePreferredDevice(it) }
                 Log.d(TAG, "AudioRecord low-latency initialized and capture playing.")
             } else {
@@ -743,6 +747,7 @@ class AudioProcessor {
                 if (audioRecord.state == AudioRecord.STATE_INITIALIZED) {
                     audioRecord.startRecording()
                     activeAudioRecord = audioRecord
+                    micReady = true
                 }
             } catch (ex: Exception) {
                 Log.e(TAG, "Total audio input capture initialization failure.", ex)
@@ -934,6 +939,7 @@ class AudioProcessor {
             Log.e(TAG, "Audio loop processing loop encountered fatal throwable.", t)
         } finally {
             // SAFE HARDWARE CLEAN-UP ON PIPELINE SHUTDOWN OR ERROR
+            micReady = false
             try {
                 audioRecord?.stop()
                 audioRecord?.release()

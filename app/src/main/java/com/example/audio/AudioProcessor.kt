@@ -851,6 +851,7 @@ class AudioProcessor {
 
                 val dspStart = System.nanoTime()
                 processBlock(inBuf, outBuf, currentBufferSize, isInputActive || filePlaying)
+                MusicBed.mixInto(outBuf, currentBufferSize)
                 if (recording) appendRecording(outBuf, currentBufferSize * 2)
                 val rmsLeftSum = blkRmsL
                 val rmsRightSum = blkRmsR

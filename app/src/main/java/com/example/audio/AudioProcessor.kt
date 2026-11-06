@@ -75,6 +75,8 @@ class AudioProcessor {
             recTotal = 0
         }
         _recordFrames.value = 0
+        agcGain = 1f
+        agcEnv = 0f
         recording = true
         _isRecording.value = true
     }
@@ -163,6 +165,8 @@ class AudioProcessor {
     private var eqLp2 = 0f
     private var eqLp3 = 0f
     private var eqLp4 = 0f
+    private var eqHpfState = 0f
+    private var eqLpfState = 0f
 
     // Compressor envelope tracker
     private var compEnvL = 0f
@@ -230,6 +234,22 @@ class AudioProcessor {
                     Log.d(TAG, "Microphone device type $deviceType not physically connected. Set preferred device to null.")
                 }
             }
+        }
+    }
+
+    // Gain automatique du micro (utilisé seulement pendant l'enregistrement) : relève une voix trop faible
+    private var agcGain = 1f
+    private var agcEnv = 0f
+
+    private fun applyMicAgc(buf: ShortArray, n: Int) {
+        for (i in 0 until n) {
+            val s = buf[i] / 32768.0f
+            val a = abs(s)
+            agcEnv += (if (a > agcEnv) 0.01f else 0.00005f) * (a - agcEnv)
+            val target = if (agcEnv > 0.003f) (0.35f / agcEnv).coerceIn(1.0f, 8.0f) else agcGain
+            agcGain += (if (target < agcGain) 0.01f else 0.0005f) * (target - agcGain)
+            val v = (s * agcGain).coerceIn(-1.0f, 1.0f)
+            buf[i] = (v * 32767.0f).toInt().toShort()
         }
     }
 
@@ -384,13 +404,13 @@ class AudioProcessor {
                 // Apply HPF & LPF
                 if (activeState.eq.highPassHz > 80f) {
                     val hpfAlpha = (2f * 3.14159f * activeState.eq.highPassHz / sampleRate).coerceIn(0.001f, 0.9f)
-                    eqLp1 += hpfAlpha * (sample - eqLp1)
-                    sample = sample - eqLp1
+                    eqHpfState += hpfAlpha * (sample - eqHpfState)
+                    sample = sample - eqHpfState
                 }
                 if (activeState.eq.lowPassHz < 15000f) {
                     val lpfAlpha = (2f * 3.14159f * activeState.eq.lowPassHz / sampleRate).coerceIn(0.01f, 0.99f)
-                    eqLp2 += lpfAlpha * (sample - eqLp2)
-                    sample = eqLp2
+                    eqLpfState += lpfAlpha * (sample - eqLpfState)
+                    sample = eqLpfState
                 }
             }
 
@@ -688,7 +708,7 @@ class AudioProcessor {
         try {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                 audioRecord = AudioRecord.Builder()
-                    .setAudioSource(MediaRecorder.AudioSource.VOICE_RECOGNITION) // VOICE_RECOGNITION has lowest DSP lag
+                    .setAudioSource(MediaRecorder.AudioSource.MIC) // Source micro standard : son plein et naturel
                     .setAudioFormat(
                         AudioFormat.Builder()
                             .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
@@ -701,7 +721,7 @@ class AudioProcessor {
             } else {
                 @Suppress("DEPRECATION")
                 audioRecord = AudioRecord(
-                    MediaRecorder.AudioSource.VOICE_RECOGNITION,
+                    MediaRecorder.AudioSource.MIC,
                     sampleRate,
                     AudioFormat.CHANNEL_IN_MONO,
                     AudioFormat.ENCODING_PCM_16BIT,
@@ -833,20 +853,25 @@ class AudioProcessor {
                 // ALWAYS read from input to prevent hardware buffer backups (zero lag buildup)
                 var samplesRead = 0
                 if (audioRecord != null) {
-                    samplesRead = audioRecord.read(inBuf, 0, currentBufferSize)
+                    // Lit un bloc complet (une lecture partielle laisserait de vieux échantillons dans le tampon)
+                    while (samplesRead < currentBufferSize) {
+                        val r = audioRecord.read(inBuf, samplesRead, currentBufferSize - samplesRead)
+                        if (r <= 0) break
+                        samplesRead += r
+                    }
                 }
 
-                // If no samples read, clear the buffer with silence
-                if (samplesRead <= 0) {
-                    for (i in 0 until currentBufferSize) {
-                        inBuf[i] = 0
-                    }
+                // Complète avec du silence si le bloc n'est pas entièrement lu
+                for (i in samplesRead until currentBufferSize) {
+                    inBuf[i] = 0
                 }
 
                 // Fichier audio importé : il remplace le micro pendant la lecture
                 val filePlaying = AudioFileBridge.isPlaying
                 if (filePlaying) {
                     AudioFileBridge.fillBuffer(inBuf, currentBufferSize)
+                } else if (recording) {
+                    applyMicAgc(inBuf, currentBufferSize)
                 }
 
                 val dspStart = System.nanoTime()

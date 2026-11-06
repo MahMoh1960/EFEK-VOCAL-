@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.audio.MonitorControl
 import com.example.audio.MusicBed
 import com.example.audio.RecordingPlayer
 import com.example.audio.ShareBridge
@@ -192,6 +193,9 @@ fun ExtrasPanel(viewModel: VocalStudioViewModel) {
     val processor = viewModel.audioProcessor
     val accent = MaterialTheme.colorScheme.primary
 
+    // --- Retour d'écoute ---
+    var muteMonitor by remember { mutableStateOf(MonitorControl.muteWhileRecording) }
+
     // --- Fond musical ---
     val musicName by MusicBed.fileName.collectAsState()
     val musicPlaying by MusicBed.playing.collectAsState()
@@ -225,6 +229,39 @@ fun ExtrasPanel(viewModel: VocalStudioViewModel) {
             .padding(12.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
+        // ===== RETOUR D'ÉCOUTE =====
+        SectionTitle("ENREGISTREMENT SANS SIFFLEMENT")
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = "Couper le retour d'écoute pendant l'enregistrement de la voix",
+                color = Color.LightGray,
+                fontSize = 10.sp,
+                lineHeight = 13.sp,
+                modifier = Modifier.weight(1f)
+            )
+            Switch(
+                checked = muteMonitor,
+                onCheckedChange = {
+                    muteMonitor = it
+                    MonitorControl.muteWhileRecording = it
+                }
+            )
+        }
+
+        Text(
+            text = "Évite le sifflement (larsen) : l'enregistrement reste complet, mais vous ne vous entendez pas pendant la prise. Réécoutez-le ensuite avec le bouton « Écouter ». Désactivez cette option seulement avec un casque.",
+            color = Color.Gray,
+            fontSize = 9.sp,
+            lineHeight = 12.sp
+        )
+
+        Divider1()
+
         // ===== FOND MUSICAL =====
         SectionTitle("FOND MUSICAL (MIXÉ AVEC VOTRE VOIX)")
 
@@ -241,10 +278,11 @@ fun ExtrasPanel(viewModel: VocalStudioViewModel) {
             Icon(Icons.Default.Add, contentDescription = null, tint = accent, modifier = Modifier.size(18.dp))
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = if (musicLoading) "DÉCODAGE EN COURS…" else if (musicName == null) "CHOISIR UNE MUSIQUE DE FOND" else "CHANGER DE MUSIQUE",
+                text = if (musicLoading) "DÉCODAGE EN COURS…" else if (musicName == null) "CHOISIR UNE MUSIQUE" else "CHANGER DE MUSIQUE",
                 color = accent,
                 fontSize = 12.sp,
-                fontWeight = FontWeight.Black
+                fontWeight = FontWeight.Black,
+                maxLines = 1
             )
         }
 
@@ -310,7 +348,7 @@ fun ExtrasPanel(viewModel: VocalStudioViewModel) {
         }
 
         Text(
-            text = "La musique joue en boucle, sans passer par les effets de la voix. Elle est incluse dans l'enregistrement. Utilisez un casque.",
+            text = "La musique joue en boucle, sans passer par les effets de la voix. Elle est incluse dans l'enregistrement. Si vous voulez l'entendre pendant la prise, utilisez un casque et désactivez la coupure du retour d'écoute.",
             color = Color.Gray,
             fontSize = 9.sp,
             lineHeight = 12.sp
@@ -360,7 +398,7 @@ fun ExtrasPanel(viewModel: VocalStudioViewModel) {
                 Icon(Icons.Default.Share, contentDescription = null, tint = accent, modifier = Modifier.size(18.dp))
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "PARTAGER LE DERNIER FICHIER EXPORTÉ",
+                    text = "PARTAGER LE DERNIER EXPORT",
                     color = accent,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Black,
@@ -403,7 +441,7 @@ fun ExtrasPanel(viewModel: VocalStudioViewModel) {
             Icon(Icons.Default.Check, contentDescription = null, tint = Color.Black, modifier = Modifier.size(18.dp))
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "ENREGISTRER LES RÉGLAGES ACTUELS",
+                text = "ENREGISTRER LES RÉGLAGES",
                 color = Color.Black,
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Black,

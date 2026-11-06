@@ -857,6 +857,7 @@ class AudioProcessor {
                 val rmsRightSum = blkRmsR
 
                 // Write processed buffer block to output playout
+                if (recording && MonitorControl.muteWhileRecording && !filePlaying) java.util.Arrays.fill(outBuf, 0, currentBufferSize * 2, 0.toShort())
                 audioTrack.write(outBuf, 0, currentBufferSize * 2)
 
                 // DSP execution time vs Hardware buffer window duration calculations (CPU usage %)
